@@ -1,0 +1,9 @@
+---
+severity:
+  info:
+    - "hung.nguyen@cfpb.gov"
+  debug: []
+  warn:
+   - "CFPB_DataPipelineTeam@cfpb.gov"
+  error: []
+  fatal: []

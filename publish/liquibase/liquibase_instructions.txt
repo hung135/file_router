@@ -1,0 +1,12 @@
+liquibase can be downloaded from http://www.liquibase.org/download/
+the postgres driver can be downloaded from https://jdbc.postgresql.org/download.html
+snakeyaml can be downloaded from http://www.java2s.com/Code/Jar/s/Downloadsnakeyaml113jar.htm (or included with liquibase)
+
+.
+├── createLiquibaseScripts.sh
+├── lib
+│   ├── postgresql-9.4.1209.jre6.jar
+│   └── snakeyaml-1.13.jar
+├── liquibase
+├── liquibase.jar
+└── liquibase.properties

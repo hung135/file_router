@@ -1,0 +1,365 @@
+{
+  "label_template": "${COUNT}",
+  "enable_pipeline_locking": false,
+  "name": "file_router",
+  "template": null,
+  "parameters": [],
+  "environment_variables": [
+    {
+      "secure": false,
+      "name": "PGHOST",
+      "value": "PGHOST"
+    },
+    {
+      "secure": false,
+      "name": "PGPORT",
+      "value": "5432"
+    },
+    {
+      "secure": false,
+      "name": "PGDATABASE",
+      "value": "file_router"
+    },
+    {
+      "secure": false,
+      "name": "PGUSER",
+      "value": "PGUSER"
+    },
+    {
+      "secure": false,
+      "name": "PGPASSWORD",
+      "value": "PGPASSWORD"
+    },
+    {
+      "secure": false,
+      "name": "PGSSLMODE",
+      "value": "require"
+    },
+    {
+      "secure": false,
+      "name": "SMTPHOST",
+      "value": "localhost"
+    },
+    {
+      "secure": false,
+      "name": "SMTPPORT",
+      "value": "25"
+    },
+    {
+      "secure": false,
+      "name": "SMTPEMAIL",
+      "value": "ops@example.com"
+    },
+    {
+      "secure": false,
+      "name": "SMTPNAME",
+      "value": "OPS Team"
+    },
+    {
+      "secure": false,
+      "name": "FORCE",
+      "value": "false"
+    }
+  ],
+  "materials": [
+    {
+      "type": "git",
+      "attributes": {
+        "url": "https://github.cfpb.gov/databases/file_router.git",
+        "destination": "project",
+        "filter": null,
+        "name": null,
+        "auto_update": true,
+        "branch": "master",
+        "submodule_folder": null
+      }
+    }
+  ],
+  "stages": [
+    {
+      "name": "migration",
+      "fetch_materials": true,
+      "clean_working_directory": true,
+      "never_cleanup_artifacts": false,
+      "approval": {
+        "type": "manual",
+        "authorization": {
+          "roles": [],
+          "users": []
+        }
+      },
+      "environment_variables": [],
+      "jobs": [
+        {
+          "name": "migration",
+          "run_instance_count": null,
+          "timeout": null,
+          "environment_variables": [],
+          "resources": [],
+          "tasks": [
+            {
+              "type": "exec",
+              "attributes": {
+                "run_if": [
+                  "passed"
+                ],
+                "on_cancel": null,
+                "command": "make",
+                "arguments": [
+                  "schema_migrate"
+                ],
+                "working_directory": "project"
+              }
+            },
+            {
+              "type": "exec",
+              "attributes": {
+                "run_if": [
+                  "passed"
+                ],
+                "on_cancel": null,
+                "command": "make",
+                "arguments": [
+                  "warden"
+                ],
+                "working_directory": "project"
+              }
+            }
+          ],
+          "tabs": [],
+          "artifacts": [],
+          "properties": null
+        }
+      ]
+    },
+    {
+      "name": "delivery",
+      "fetch_materials": true,
+      "clean_working_directory": true,
+      "never_cleanup_artifacts": false,
+      "approval": {
+        "type": "success",
+        "authorization": {
+          "roles": [],
+          "users": []
+        }
+      },
+      "environment_variables": [],
+      "jobs": [
+        {
+          "name": "delivery",
+          "run_instance_count": null,
+          "timeout": null,
+          "environment_variables": [],
+          "resources": [],
+          "tasks": [
+            {
+              "type": "exec",
+              "attributes": {
+                "run_if": [
+                  "passed"
+                ],
+                "on_cancel": null,
+                "command": "make",
+                "arguments": [
+                  "data_load"
+                ],
+                "working_directory": "project"
+              }
+            }
+          ],
+          "tabs": [],
+          "artifacts": [],
+          "properties": null
+        }
+      ]
+    },
+    {
+      "name": "health",
+      "fetch_materials": true,
+      "clean_working_directory": true,
+      "never_cleanup_artifacts": false,
+      "approval": {
+        "type": "success",
+        "authorization": {
+          "roles": [],
+          "users": []
+        }
+      },
+      "environment_variables": [],
+      "jobs": [
+        {
+          "name": "health",
+          "run_instance_count": null,
+          "timeout": null,
+          "environment_variables": [],
+          "resources": [],
+          "tasks": [
+            {
+              "type": "exec",
+              "attributes": {
+                "run_if": [
+                  "passed"
+                ],
+                "on_cancel": null,
+                "command": "make",
+                "arguments": [
+                  "health_checks"
+                ],
+                "working_directory": "project"
+              }
+            }
+          ],
+          "tabs": [
+            {
+              "name": "Report",
+              "path": "healthcheck.report.html"
+            }
+          ],
+          "artifacts": [
+            {
+              "source": "project/healthcheck.report.html",
+              "destination": "",
+              "type": "test"
+            }
+          ],
+          "properties": null
+        }
+      ]
+    },
+    {
+            "name": "publish",
+            "fetch_materials": true,
+            "clean_working_directory": false,
+            "never_cleanup_artifacts": false,
+            "approval": {
+                "type": "success",
+                "authorization": {
+                    "roles": [],
+                    "users": []
+                }
+            },
+            "environment_variables": [],
+            "jobs": [
+                {
+                    "name": "publish",
+                    "run_instance_count": null,
+                    "timeout": null,
+                    "environment_variables": [
+                        {
+                            "name": "PGHOST_INTERNAL",
+                            "secure": false,
+                            "value": "PGHOST_INTERNAL"
+                        },
+                        {
+                            "name": "PGPORT_INTERNAL",
+                            "secure": false,
+                            "value": "5432"
+                        },
+                        {
+                            "name": "PGDATABASE_INTERNAL",
+                            "secure": false,
+                            "value": "file_router"
+                        },
+                        {
+                            "name": "PGUSER_INTERNAL",
+                            "secure": false,
+                            "value": "PGUSER"
+                        },
+                        {
+                            "name": "PGPASSWORD_INTERNAL",
+                            "secure": false,
+                            "value": "PGPASSWORD"
+                        },
+                        {
+                            "name": "PGHOST_EXTERNAL",
+                            "secure": false,
+                            "value": "PGHOST"
+                        },
+                        {
+                            "name": "PGPORT_EXTERNAL",
+                            "secure": false,
+                            "value": "5432"
+                        },
+                        {
+                            "name": "PGDATABASE_EXTERNAL",
+                            "secure": false,
+                            "value": "file_router"
+                        },
+                        {
+                            "name": "PGUSER_EXTERNAL",
+                            "secure": false,
+                            "value": "PGUSER"
+                        },
+                        {
+                            "name": "PGPASSWORD_EXTERNAL",
+                            "secure": false,
+                            "value": "PGPASSWORD"
+                        },
+                        {
+                            "name": "PGSSLMODE",
+                            "secure": false,
+                            "value": "require"
+                        },
+                        {
+                            "name": "CLEANSQL",
+                            "secure": false,
+                            "value": "true"
+                        },
+                        {
+                            "name": "DROPSCHEMA",
+                            "secure": false,
+                            "value": "true"
+                        },
+                        {
+                            "name": "PGLINKUSER",
+                            "secure": false,
+                            "value": ""
+                        },
+                        {
+                            "name": "PGLINKPASSWORD",
+                            "secure": false,
+                            "value": ""
+                        }
+                    ],
+                    "resources": [],
+                    "tasks": [
+                        {
+                            "type": "exec",
+                            "attributes": {
+                                "run_if": [
+                                    "passed"
+                                ],
+                                "on_cancel": null,
+                                "command": "make",
+                                "arguments": [
+                                    "publish"
+                                ],
+                                "working_directory": "project"
+                            }
+                        },
+                        {
+                            "type": "exec",
+                            "attributes": {
+                                "run_if": [
+                                    "passed"
+                                ],
+                                "on_cancel": null,
+                                "command": "make",
+                                "arguments": [
+                                    "warden"
+                                ],
+                                "working_directory": "project/publish"
+                            }
+                        }
+                    ],
+                    "tabs": [],
+                    "artifacts": [],
+                    "properties": null
+                }
+            ]
+        }
+  ],
+  "tracking_tool": null,
+  "timer": null
+}
