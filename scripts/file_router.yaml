@@ -1,0 +1,13 @@
+
+project1:
+  incoming: 
+    path: 'incoming/test'
+    file_pathern: '*.zip'
+  outgoing: 
+    path: 'outgoing/test'
+    rename_options:
+      - lowercase
+      - snakecase
+      
+  
+ 

@@ -11,7 +11,7 @@ def get_engine(env=None, echo=False):
         database=env["PGHOST"],
         port=env["PGPORT"],
     )
-    connect_args={'sslmode':env["PGSSLMODE"]}
+    connect_args={'sslmode':env.get("PGSSLMODE",None)}
     return sqlalchemy.create_engine(database, connect_args=connect_args, echo=echo)
 
 def get_metadata(engine=None, **kwargs):
