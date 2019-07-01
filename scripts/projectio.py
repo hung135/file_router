@@ -19,7 +19,6 @@ class Incoming:
     def __init__(self, **config):
         self.__dict__.update(config)
         self.files = self._walk_files()
-        print(self.files)
 
     def _walk_files(self):
         if hasattr(self, "file_pathern"):
