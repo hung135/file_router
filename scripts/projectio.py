@@ -1,3 +1,4 @@
+import os 
 import shutil
 import glob
 from logic.rename_options import RenameOptions
@@ -11,14 +12,16 @@ class Outgoing:
     def __init__(self, **config):
         self.__dict__.update(config)
     
-    def rename_options(self, files):
+    def rename(self, files):
         if hasattr(self, "rename_options"):
             options = RenameOptions()
             for option in self.rename_options:
                 if hasattr(options, option):
-                    for f in files:
-                        f = getattr(options, option)(f)
-                        shutil.copy(f, )
+                    for i,f in enumerate(files):
+                        new = getattr(options, option)(f)
+                        os.rename(f, new)
+                        files[i] = new
+        return files
 
     def move_files(self, files):
         if hasattr(self, "path"):

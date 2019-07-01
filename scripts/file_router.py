@@ -26,7 +26,8 @@ if __name__ == "__main__":
    projects = []
    for project in config:
       proj = ProjectIO(project, **config[project])
-      proj.outgoing.rename_options(proj.incoming.files)
+      proj.incoming.files = proj.outgoing.rename(proj.incoming.files)
+      proj.outgoing.move_files(proj.incoming.files)
       # If we wanted to do something with it later
       projects.append(proj)
 

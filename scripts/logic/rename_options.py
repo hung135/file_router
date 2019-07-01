@@ -7,13 +7,12 @@ all_cap_re = re.compile('([a-z0-9])([A-Z])')
 class RenameOptions:
     # Modified from from:
     # https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case
-    def snakecase(given_path):
+    def snakecase(self, given_path):
         filename = os.path.basename(given_path)
         filename = first_cap_re.sub(r'\1_\2', filename)
         filename = all_cap_re.sub(r'\1_\2', filename).lower()
         return given_path.replace(os.path.basename(given_path), filename)
 
-    def lowercase(path):
-        filename = _get_file_names(given)
-        filename = filename.lower
+    def lowercase(self, given_path):
+        filename = os.path.basename(given_path).lower()
         return given_path.replace(os.path.basename(given_path), filename)
