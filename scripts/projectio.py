@@ -12,8 +12,10 @@ class Outgoing:
     
     def move_files(self, files):
         if hasattr(self, "path"):
-            for f in glob(files):
-                shutil.move(f, self.path)
+            try:
+                [shutil.move(f, self.path) for f in files]
+            except Exception as e:
+                print(e)
 
 class Incoming:
     def __init__(self, **config):
