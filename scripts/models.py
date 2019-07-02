@@ -1,7 +1,8 @@
 import db
-from sqlalchemy import Column, Integer, Text, TIMESTAMP
+from sqlalchemy import Column, Integer, Text, TIMESTAMP, String
 from sqlalchemy.orm import mapper, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+import datetime
 
 ################################################################################
 # Do this once at the top of the file (or better yet in a models.py so multiple scripts can use it)
@@ -21,8 +22,14 @@ DecBase = declarative_base(bind=engine, metadata=meta)
 class FileRouterHistory(DecBase, db.Base):
     __tablename__= "file_router_history"
     id = Column(Integer, primary_key=True)
-    project_name = Column(Text)
-    age = Column(Integer)
+    project_name = Column(String(32))
+    incoming_path = Column(Text)
+    outgoing_path = Column(Text,unique=True)
+    file_date = Column(TIMESTAMP)
+    file_md5 = Column(String(32))
+    file_size = Column(Integer)
+    file_path_extract = Column(String(32))
+    created_date = Column(DateTime, default=datetime.datetime.utcnow)
 DecBase.metadata.create_all(engine) #Creates the tables in the DB if they don't exist
 
 

@@ -33,8 +33,10 @@ class TestFileRouter(unittest.TestCase,Config):
         for project in yaml_config:
             incoming_path=yaml_config[project]['incoming']['path']
             outgoing_path=yaml_config[project]['outgoing']['path']
-            shutil.rmtree(incoming_path)
-            shutil.rmtree(outgoing_path)
+            if os.path.exists(incoming_path):
+                shutil.rmtree(incoming_path)
+            if os.path.exists(outgoing_path):
+                shutil.rmtree(outgoing_path)
     def test_02_make_dirs(self): #using environment variables
         yaml_config= yaml_reader('/workspace/scripts/file_router.yaml')
         for project in yaml_config:
@@ -45,7 +47,7 @@ class TestFileRouter(unittest.TestCase,Config):
             os.makedirs(os.path.abspath(pio.incoming.path),exist_ok=True)
             os.makedirs(os.path.abspath(pio.outgoing.path),exist_ok=True) 
             #print(yaml_reader('/workspace/scripts/file_router.yaml'))
-            lorem = TextLorem(wsep='-', srange=(2,3) )
+            lorem = TextLorem(wsep='_', srange=(2,3) )
             for i in range(10):
                 
                 file_name=lorem.sentence()+random.choice(FILE_TYPES)
