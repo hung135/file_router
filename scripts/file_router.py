@@ -13,9 +13,10 @@ from projectio import ProjectIO
 # Do this whenever you need a connection to the DB. (typically once at the top of your script)
 #sess = Session()
 
-def yaml_reader():
+def yaml_reader(yaml_path=None):
+   file_path=yaml_path or "file_router.yaml"
    try:
-      with open("file_router.yaml", "r") as f:
+      with open(file_path, "r") as f:
          return yaml.safe_load(f)
    except FileNotFoundError as e:
       print(e)

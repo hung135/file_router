@@ -1,10 +1,10 @@
 
 project1:
   incoming: 
-    path: '.'
+    path: '/workspace/incoming/'
     file_pathern: '*.zip'
   outgoing: 
-    path: '/workspace/scripts/testing/export'
+    path: '/workspace/outgoing/'
     rename_options:
       - lowercase
       - snakecase

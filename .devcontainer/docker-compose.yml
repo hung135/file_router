@@ -22,6 +22,7 @@ services:
       PGUSER: postgres
       PGPASSWORD: docker
       PGPORT: 5432
+      PYTHONPATH: '/workspace/scripts/'
     depends_on:
       - db 
         #condition: service_healthy
