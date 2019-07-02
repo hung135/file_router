@@ -27,7 +27,12 @@ RUN apt-get update \
     # Update Python environment based on requirements.txt (if presenet)
     && if [ -f "/tmp/pip-tmp/requirements.txt" ]; then pip install -r /tmp/pip-tmp/requirements.txt; fi \
     && rm -rf /tmp/pip-tmp \
-    && apt-get -y install fish vim postgresql-client
+    && apt-get -y install fish vim postgresql-client sqitch locales 
+    RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    locale-gen
+    ENV LANG en_US.UTF-8  
+    ENV LANGUAGE en_US:en  
+    ENV LC_ALL en_US.UTF-8   
     #
     # Clean up
     # && apt-get autoremove -y \
