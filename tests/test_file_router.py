@@ -7,7 +7,7 @@ from config_parent import Config
 from file_router import yaml_reader
 from projectio import ProjectIO
 from lorem.text import TextLorem
-import shutil.rmtree as rmtree
+import shutil   
 
 
 __author__ = "Hung Nguyen"
@@ -26,11 +26,17 @@ def clean_working_dir(folder: str):
         except Exception as e:
             print(e)
 class TestFileRouter(unittest.TestCase,Config):
-    def test_make_dirs(self): #using environment variables
-        os.makedirs(os.path.abspath(self.dirs['working_dir']),exist_ok=True)
+    def test_01_clean_dirs(self): #using environment variables
         yaml_config= yaml_reader('/workspace/scripts/file_router.yaml')
         for project in yaml_config:
-            print(yaml_config[project])
+            incoming_path=yaml_config[project]['incoming']['path']
+            outgoing_path=yaml_config[project]['outgoing']['path']
+            shutil.rmtree(incoming_path)
+            shutil.rmtree(outgoing_path)
+    def test_02_make_dirs(self): #using environment variables
+        yaml_config= yaml_reader('/workspace/scripts/file_router.yaml')
+        for project in yaml_config:
+             
             incoming=yaml_config[project]['incoming']
             outgoing=yaml_config[project]['outgoing']
             pio=ProjectIO(project=project,incoming=incoming,outgoing=outgoing)
@@ -39,15 +45,21 @@ class TestFileRouter(unittest.TestCase,Config):
             #print(yaml_reader('/workspace/scripts/file_router.yaml'))
             lorem = TextLorem(wsep='-', srange=(2,3) )
             for i in range(10):
-                print(lorem.sentence())
+                
                 file_name=lorem.sentence()+'.zip'
                 with open(os.path.join(pio.incoming.path,file_name),'a') as f:
                     f.write(lorem.paragraph())
-    def test_clean_dirs(self): #using environment variables
+    def test_03_move_files(self):
         yaml_config= yaml_reader('/workspace/scripts/file_router.yaml')
         for project in yaml_config:
-            incoming_path=yaml_config[project]['incoming']['path']
-            outgoing_path=yaml_config[project]['outgoing']['path']
-            rmtree(incoming_path)
+            incoming=yaml_config[project]['incoming']
+            outgoing=yaml_config[project]['outgoing']
+            pio=ProjectIO(project=project,incoming=incoming,outgoing=outgoing)
+            pio.outgoing.move_files(pio.incoming.files)
+            for file in pio.incoming.files:
+                print("Checking file: ",file)
+                new_path=os.path.join(pio.outgoing.path,file)
+                self.assertTrue(new_path)
+                    
 if __name__ == '__main__':
     unittest.main()
