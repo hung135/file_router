@@ -29,9 +29,10 @@ if __name__ == "__main__":
    for project in config:
       proj = ProjectIO(project, **config[project])
       proj.incoming.save_all(sess)
-      # proj.outgoing.file_history(proj.incoming.files)
-      # proj.incoming.files = proj.outgoing.rename(proj.incoming.files)
-      # proj.outgoing.move_files(proj.incoming.files)
+      proj.incoming.files, proj.incoming.mappings = proj.outgoing.rename(proj.incoming.files)
+      proj.outgoing.file_history(proj.incoming, sess)
+      proj.outgoing.move_files(proj.incoming.files)
+
       # If we wanted to do something with it later
       projects.append(proj)
  
