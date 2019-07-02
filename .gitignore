@@ -1,4 +1,6 @@
 **/env_vars.rc
 env_vars.rc
 */env/
-*/__pycache__/
+**/__pycache__/
+incoming/
+outgoing/

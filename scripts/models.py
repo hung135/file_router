@@ -8,7 +8,7 @@ import datetime
 # Do this once at the top of the file (or better yet in a models.py so multiple scripts can use it)
 ################################################################################
 engine = db.get_engine()
-meta = db.get_metadata(engine, schema="test")
+meta = db.get_metadata(engine, schema="file_router")
 Session = sessionmaker(bind=engine)
 
 # Defining new tables in the DB
@@ -30,7 +30,7 @@ class FileRouterHistory(DecBase, db.Base):
     file_size = Column(Integer)
     file_path_extract = Column(String(32))
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
-DecBase.metadata.create_all(engine) #Creates the tables in the DB if they don't exist
+# DecBase.metadata.create_all(engine) #Creates the tables in the DB if they don't exist
 
 
 ################################################################################

@@ -8,3 +8,4 @@ project1:
     rename_options:
       - lowercase
       - snakecase
+    file_path_extract: (\d\d\d\d)
