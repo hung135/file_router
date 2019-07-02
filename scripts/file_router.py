@@ -1,32 +1,35 @@
-import db
+# https://www.python.org/dev/peps/pep-0008/#imports
+import os
+import yaml
 from sqlalchemy import Column, Integer, Text
 from sqlalchemy.orm import mapper, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-import models
-from models import   Session
-import yaml
-from utils import getListOfFiles
-import os
+# import db
+# from models import Session
+from projectio import ProjectIO
 ################################################################################
 # This can go in your actual scripts
 ################################################################################
 # Do this whenever you need a connection to the DB. (typically once at the top of your script)
-sess = Session()
-yaml_config=None
+#sess = Session()
+
+def yaml_reader():
+   try:
+      with open("file_router.yaml", "r") as f:
+         return yaml.safe_load(f)
+   except FileNotFoundError as e:
+      print(e)
 
 
-with open('file_router.yaml','r') as f:
-   yaml_config=yaml.safe_load(f)
-
-
-for i in yaml_config:
-   print(i,"----------------------")
-   incoming=i['incoming']
-   path=os.path.abspath(incoming['path'])
-   list_of_files=getListOfFiles(path)
-   outgoing=i['outgoing']
-   #walk_dir(incoming)
-   #move_dir(outgoing)
+if __name__ == "__main__":
+   config = yaml_reader()
+   projects = []
+   for project in config:
+      proj = ProjectIO(project, **config[project])
+      proj.incoming.files = proj.outgoing.rename(proj.incoming.files)
+      proj.outgoing.move_files(proj.incoming.files)
+      # If we wanted to do something with it later
+      projects.append(proj)
 
 # # Querying
 # for rec in sess.query(PathConfig):
