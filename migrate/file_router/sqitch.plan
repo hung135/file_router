@@ -4,3 +4,4 @@
 
 initschema 2019-06-28T11:51:56Z root <root@34fccdc53f70> # Add file_router schema for all Incoming File Router objects.
 stagingschema 2019-06-28T11:51:57Z root <root@34fccdc53f70> # Add stg schema.
+tables/file_router.file_router_history 2019-07-02T17:03:53Z root <root@f7012d51ef0c> # Adding file_router.file_router_history.sql
