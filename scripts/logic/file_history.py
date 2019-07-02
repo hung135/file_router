@@ -2,23 +2,29 @@ import os
 import re
 import hashlib
 
-class FileHistory:
-    def md5(self, f):
-        return hashlib.md5(open(f, "rb")).read()).hexdigest()
+class FileHistory():
+    @classmethod
+    def file_information(self, f, reg=None):
+        try:
+            _extract = None
+            _md5 = hashlib.md5(open(f, "rb").read()).hexdigest()
+            _size = os.path.getsize(f)
+            _date = os.stat(f).st_mtime
 
-    def file_size(self, f):
-        return os.path.getsize(f)
+            if reg is not None:
+                _extract = self.file_path_extract(f, reg)
 
-    def file_date():
-        return os.stat(f).st_mtime
+            return (_md5, _size, _date, _extract)
+        except Exception as e:
+            print("Something went wrong \n %s" % (e))
+            return (None, None, None, None)
 
-    def file_path_extract(self, files):
-        if hasattr(self, "date_extract"):
-            try:
-                # check if regex is valid
-                reg = re.compile(self.date_extract)
-
-            except re.errors:
-                print("invalid regex, skipping")
-            except Exception as e:
-                print("Something went wrong \n %s" % (e))
+    @staticmethod
+    def file_path_extract(f, reg):
+        try:
+            reg = re.compile(reg)
+            found = re.findall(reg, f)
+            return None if len(found) == 0 else found[-1]
+        except re.errors:
+            print("invalid regex, skipping")
+            return None

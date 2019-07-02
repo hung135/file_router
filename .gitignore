@@ -2,3 +2,5 @@
 env_vars.rc
 */env/
 **/__pycache__/
+incoming/
+outgoing/

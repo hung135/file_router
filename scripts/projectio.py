@@ -18,7 +18,7 @@ class ProjectIO:
 
     def _executor(self, _obj):
         # idea here: https://stackoverflow.com/questions/37075680/run-all-functions-in-class
-        methods = [method for method in dir(_obj) if callable(getattr(_obj, method) if not method.startswith("_"))]
+        methods = [method for method in dir(_obj) if callable(getattr(_obj, method)) if not method.startswith("_")]
         for method in methods:
             getattr(_obj, method)(self.incoming.files)
 
@@ -38,15 +38,13 @@ class Outgoing:
         return files
 
     def file_history(self, files):
-        responses = {}
-        if hasattr(self, "file_history"):
-            options = FileHistory()
-            for option in self.file_history:
-                if hasattr(options, option):
-                    for i,f in enumerate(files):
-                        responses[option] = getattr(options, option)(f)
-
-
+        reg = self.file_path_extract if hasattr(self, "file_path_extract") else None
+        options = FileHistory()
+        for i,f in enumerate(files):
+            fn = os.path.basename(f)
+            md5, size, date, extract = FileHistory.file_information(f,reg)
+            print(md5, size, date, extract)
+            # save into db
 
     def move_files(self, files):
         if hasattr(self, "path"):

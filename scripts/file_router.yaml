@@ -8,8 +8,4 @@ project1:
     rename_options:
       - lowercase
       - snakecase
-    file_history:
-      - file_path_extract: ^\d{1,2}\/\d{1,2}\/\d{4}$
-      - md5: true
-      - file_size: true
-      - file_path_extract: true
+    file_path_extract: (\d\d\d\d)
