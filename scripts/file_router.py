@@ -7,11 +7,12 @@ from sqlalchemy.ext.declarative import declarative_base
 # import db
 # from models import Session
 from projectio import ProjectIO
+from models import FileRouterHistory, Session
 ################################################################################
 # This can go in your actual scripts
 ################################################################################
 # Do this whenever you need a connection to the DB. (typically once at the top of your script)
-#sess = Session()
+sess = Session()
 
 def yaml_reader(yaml_path=None):
    file_path=yaml_path or "file_router.yaml"
@@ -32,7 +33,14 @@ if __name__ == "__main__":
       # proj.outgoing.move_files(proj.incoming.files)
       # If we wanted to do something with it later
       projects.append(proj)
+ 
+      # Querying
+   for rec in sess.query(FileRouterHistory).filter(FileRouterHistory.project_name == ""):
+      print(rec)
 
+      # Adding
+     
+      sess.commit()
 # # Querying
 # for rec in sess.query(PathConfig):
 #    print(rec)
