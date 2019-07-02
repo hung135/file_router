@@ -10,7 +10,7 @@
 
 	// Uncomment the next line to run commands after the container is created.
 	// "postCreateCommand": "python --version",
-
+	"postCreateCommand": "/workspace/tests/init.sh",
 	"extensions": [
 		"ms-python.python"
 	],
