@@ -1,8 +1,8 @@
 import db
-from sqlalchemy import Column, Integer, Text, TIMESTAMP, String
+from sqlalchemy import Column, Integer, Text, TIMESTAMP, String, DateTime
 from sqlalchemy.orm import mapper, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-import datetime
+ 
 
 ################################################################################
 # Do this once at the top of the file (or better yet in a models.py so multiple scripts can use it)
