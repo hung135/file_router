@@ -2,7 +2,7 @@ import db
 from sqlalchemy import Column, Integer, Text, TIMESTAMP, String, DateTime
 from sqlalchemy.orm import mapper, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
- 
+import datetime
 
 ################################################################################
 # Do this once at the top of the file (or better yet in a models.py so multiple scripts can use it)
@@ -37,12 +37,12 @@ DecBase.metadata.create_all(engine) #Creates the tables in the DB if they don't 
 # Load the tables you want to work with
 ################################################################################
 
-# Autoloading tables that are already defined in the DB
-class FileRouter(db.Base):
-   pass
-mytable = db.load_table("test1", meta, id_col="tbl_id")
-mapper(FileRouter, mytable)
+# # Autoloading tables that are already defined in the DB
+# class FileRouter(db.Base):
+#    pass
+# mytable = db.load_table("test1", meta, id_col="tbl_id")
+# mapper(FileRouter, mytable)
 
-# Print MyTable attributes
-mytable_attributes = [attr for attr in dir(FileRouter) if not attr.startswith('__')]
-print('FileRouter def:{}'.format(mytable_attributes))
+# # Print MyTable attributes
+# mytable_attributes = [attr for attr in dir(FileRouter) if not attr.startswith('__')]
+# print('FileRouter def:{}'.format(mytable_attributes))
