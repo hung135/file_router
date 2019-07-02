@@ -7,6 +7,7 @@ from config_parent import Config
 from file_router import yaml_reader
 from projectio import ProjectIO
 from lorem.text import TextLorem
+import shutil.rmtree as rmtree
 
 
 __author__ = "Hung Nguyen"
@@ -42,5 +43,11 @@ class TestFileRouter(unittest.TestCase,Config):
                 file_name=lorem.sentence()+'.zip'
                 with open(os.path.join(pio.incoming.path,file_name),'a') as f:
                     f.write(lorem.paragraph())
+    def test_clean_dirs(self): #using environment variables
+        yaml_config= yaml_reader('/workspace/scripts/file_router.yaml')
+        for project in yaml_config:
+            incoming_path=yaml_config[project]['incoming']['path']
+            outgoing_path=yaml_config[project]['outgoing']['path']
+            rmtree(incoming_path)
 if __name__ == '__main__':
     unittest.main()
