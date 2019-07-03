@@ -2,7 +2,9 @@
 project1:
   incoming: 
     path: '/home/dtdata/transfer/connect_direct/frb/download/'
-    file_pathern: '*.zip'
+    file_pathern: 
+      - '*.zip'
+      - '*.csv'
   outgoing: 
     path: '/workspace/outgoing/project1'
     rename_options:
