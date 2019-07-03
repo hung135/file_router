@@ -10,12 +10,15 @@ from lorem.text import TextLorem
 import shutil   
 import py_dbutils.rdbms.postgres as dbconn 
 import random
-
+from models import FileRouterHistory, Session,DecBase,engine
 __author__ = "Hung Nguyen"
 __copyright__ = "Hung Nguyen"
 __license__ = "mit"
 
 FILE_TYPES = ['zip','txt','csv','db','xls']
+SESS = Session()
+DecBase.metadata.create_all(engine)
+
 def clean_working_dir(folder: str):
     import os, shutil
      
@@ -44,6 +47,7 @@ class TestFileRouter(unittest.TestCase,Config):
             incoming=yaml_config[project]['incoming']
             outgoing=yaml_config[project]['outgoing']
             pio=ProjectIO(project=project,incoming=incoming,outgoing=outgoing)
+            
             os.makedirs(os.path.abspath(pio.incoming.path),exist_ok=True)
             os.makedirs(os.path.abspath(pio.outgoing.path),exist_ok=True) 
             #print(yaml_reader('/workspace/scripts/file_router.yaml'))
@@ -53,6 +57,7 @@ class TestFileRouter(unittest.TestCase,Config):
                 file_name=lorem.sentence()+random.choice(FILE_TYPES)
                 with open(os.path.join(pio.incoming.path,file_name),'a') as f:
                     f.write(lorem.paragraph())
+                os.chmod(os.path.join(pio.incoming.path,file_name), 0o777)
     def test_03_move_files(self):
         self.pio=[]
         yaml_config= yaml_reader('/workspace/scripts/file_router.yaml')
@@ -61,6 +66,7 @@ class TestFileRouter(unittest.TestCase,Config):
             outgoing=yaml_config[project]['outgoing']
             outgoing_path=yaml_config[project]['outgoing']['path']
             pio=ProjectIO(project=project,incoming=incoming,outgoing=outgoing)
+            pio.incoming.save_all(SESS)
             pio.outgoing.move_files(pio.incoming.files)
             self.pio.append(pio) #saving this so we can test base on values that current exists in this object
             for file in pio.incoming.files:
