@@ -18,7 +18,7 @@ __license__ = "mit"
 FILE_TYPES = ['zip','txt','csv','db','xls']
 SESS = Session()
 DecBase.metadata.create_all(engine)
-
+yaml_config= yaml_reader('/workspace/scripts/file_router.yaml')
 def clean_working_dir(folder: str):
     import os, shutil
      
@@ -32,7 +32,7 @@ def clean_working_dir(folder: str):
             print(e)
 class TestFileRouter(unittest.TestCase,Config):
     def test_01_clean_dirs(self): #using environment variables
-        yaml_config= yaml_reader('/workspace/scripts/file_router.yaml')
+         
         for project in yaml_config:
             incoming_path=yaml_config[project]['incoming']['path']
             outgoing_path=yaml_config[project]['outgoing']['path']
@@ -41,7 +41,7 @@ class TestFileRouter(unittest.TestCase,Config):
             if os.path.exists(outgoing_path):
                 shutil.rmtree(outgoing_path)
     def test_02_make_dirs(self): #using environment variables
-        yaml_config= yaml_reader('/workspace/scripts/file_router.yaml')
+        
         for project in yaml_config:
              
             incoming=yaml_config[project]['incoming']
@@ -58,9 +58,10 @@ class TestFileRouter(unittest.TestCase,Config):
                 with open(os.path.join(pio.incoming.path,file_name),'a') as f:
                     f.write(lorem.paragraph())
                 os.chmod(os.path.join(pio.incoming.path,file_name), 0o777)
+   
     def test_03_move_files(self):
         self.pio=[]
-        yaml_config= yaml_reader('/workspace/scripts/file_router.yaml')
+       
         for project in yaml_config:
             incoming=yaml_config[project]['incoming']
             outgoing=yaml_config[project]['outgoing']
@@ -74,16 +75,21 @@ class TestFileRouter(unittest.TestCase,Config):
                 
                 print("Checking file in Out folder: ",new_path)
                 self.assertTrue(os.path.isfile(new_path))
-                    
-    def test_04_query_db(self):
+        #verify db logic here since the meata data still exits
         db=dbconn.DB()
-        #query the db for each file in the outgoing directory to make sure it was logged
-        # for pio in self.pio:
+        for p in pio:
+            for file in p.incoming.files:
+                print(file)
+    # def test_04_query_db(self):
+        
+    #     print("------------------  ")
+    #     #query the db for each file in the outgoing directory to make sure it was logged
+    #     # for pio in self.pio:
  
-        #     for file in pio.incoming.files:
-        #         print("Checking file in DB: ",file)
-        #         file_exists_in_db=0
-        #         file_exists_in_db,_=db.query(f'select 1 from test.table where file_name="{new_path}"')
-        #         self.assertTrue(int(file_exists_in_db),1)
+    #     #     for file in pio.incoming.files:
+    #     #         print("Checking file in DB: ",file)
+    #     #         file_exists_in_db=0
+    #     #         file_exists_in_db,_=db.query(f'select 1 from test.table where file_name="{new_path}"')
+    #     #         self.assertTrue(int(file_exists_in_db),1)
 if __name__ == '__main__':
     unittest.main()
