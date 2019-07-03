@@ -1,5 +1,6 @@
 
 project1:
+  #logging: '/workspace/outgoing/logging.log'
   incoming: 
     path: '/home/dtdata/transfer/connect_direct/frb/download/'
     file_pathern: 
@@ -12,6 +13,7 @@ project1:
       - snakecase
     file_path_extract: (\d\d\d\d)
 project2:
+  #logging: '/workspace/outgoing/project2/logging.log'
   incoming: 
     path: '/home/dtdata/transfer/connect_direct/frb/download/'
     file_pathern: '*.xls'
