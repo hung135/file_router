@@ -12,12 +12,14 @@ class ProjectIO:
         self.outgoing = Outgoing(project, **config["outgoing"])
         self.incoming = Incoming(project, **config["incoming"])
     
-    def run_pipeline(self):
-        # run incoming first
-        self.incoming
-        # run outcoming next
-        self._executor(self.outcoming)
-
+    def run_pipeline(self, session):
+        # run incoming steps
+        self.incoming.save_all(session)
+        self.incoming.files, self.incoming.mappings = self.outgoing.rename(self.incoming.files)
+        # run outgoing steps
+        self.outgoing.file_history(self.incoming, session)
+        self.outgoing.move_files(self.incoming.files)
+    
     def _executor(self, _obj):
         # idea here: https://stackoverflow.com/questions/37075680/run-all-functions-in-class
         methods = [method for method in dir(_obj) if callable(getattr(_obj, method)) if not method.startswith("_")]
