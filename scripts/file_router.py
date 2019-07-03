@@ -68,7 +68,11 @@ def runner(args):
    config = yaml_reader(args.yaml)
    projects = []
    for project in config:
-      logger = generate_logger(config[project]["logging"])
+      logger = None
+      try:
+         logger = generate_logger(config[project]["logging"])
+      except KeyError:
+         continue
       proj = ProjectIO(project, logger, **config[project])
       proj.run_pipeline(sess)
       projects.append(proj)

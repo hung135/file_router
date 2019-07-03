@@ -1,6 +1,6 @@
 
 project1:
-  logging: '/workspace/outgoing/logging.log'
+  logging: '/workspace/logging.log'
   incoming: 
     path: '/workspace/incoming'
     file_pattern: 
