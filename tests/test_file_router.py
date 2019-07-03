@@ -5,7 +5,7 @@ import unittest
 import os
 from config_parent import Config
 from file_router import yaml_reader
-from projectio import ProjectIO
+from projectio.projectio import ProjectIO
 from lorem.text import TextLorem
 import shutil   
 import py_dbutils.rdbms.postgres as dbconn 
