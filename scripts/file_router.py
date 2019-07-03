@@ -20,7 +20,7 @@ def yaml_reader(yaml_path=None):
       print(e)
 
 def generate_logger(logging_path):
-   logging.basicConfig(filename=logging_path, filemode="a", format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s", datefmt="%H:%M:%S",level=logging.DEBUG)
+   logging.basicConfig(filename=logging_path, filemode="a", format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s,", datefmt="%H:%M:%S",level=logging.DEBUG)
    logger = logging.getLogger()
    return logger
 
@@ -28,13 +28,13 @@ def parse_cli():
    parser = argparse.ArgumentParser(description='Process a yaml file')
    parser.add_argument("--yaml", help="Location of the yaml file")
    parser.add_argument("--skeleton", help="Generates a skeleton.yaml file to the directory specified")
-   parser.add_argument("--logging", required=True, help="Where to write the logger too")
    args = parser.parse_args()
    return args 
 
 def create_skeleton(path):
    example = {
       "project_name1": {
+         "logging": "<path>",
          "incoming": {
             "path": "<string>",
             "file_pattern": ["glob style of target file; i.e.: *.zip", "file_pattern_2"]
@@ -46,6 +46,7 @@ def create_skeleton(path):
          }
       },
       "project_name2": {
+         "logging": "<path>",
          "incoming": {
             "path": "<string>",
             "file_pattern": ["glob style of target file; i.e.: *.zip", "file_pattern_2"]
@@ -65,9 +66,9 @@ def create_skeleton(path):
 
 def runner(args):
    config = yaml_reader(args.yaml)
-   logger = generate_logger(args.logging)
    projects = []
    for project in config:
+      logger = generate_logger(config[project]["logging"])
       proj = ProjectIO(project, logger, **config[project])
       proj.run_pipeline(sess)
       projects.append(proj)

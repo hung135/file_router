@@ -3,7 +3,7 @@ from .incoming import Incoming
 from .outgoing import Outgoing
 
 class ProjectIO:
-    def __init__(self, project, logger, **config):
+    def __init__(self, project, logger=None, **config):
         self.outgoing = Outgoing(project, logger, **config["outgoing"])
         self.incoming = Incoming(project, logger, **config["incoming"])
     

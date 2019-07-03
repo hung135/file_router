@@ -3,7 +3,7 @@ import glob
 from models import FileRouterHistory
 
 class Incoming:
-    def __init__(self, project, logger, **config):
+    def __init__(self, project, logger=None, **config):
         self.__dict__.update(config)
         self.project = project
         self.logger = logger
@@ -17,7 +17,8 @@ class Incoming:
             for t in self.file_pattern:
                 paths_based_on_file_pattern.extend(glob.glob(self.path + "/**/" + t, recursive=True))
             not_using = list(set(paths) - set(paths_based_on_file_pattern))
-            [self.logger.warning("Will not do this %s" % (os.path.basename(fn))) for fn in not_using]
+            if self.logger is not None:
+                [self.logger.warning("Will not process this file %s" % (os.path.basename(fn))) for fn in not_using]
             paths = paths_based_on_file_pattern
         paths = [p for p in paths if os.path.basename(p) != "."]
         return paths
