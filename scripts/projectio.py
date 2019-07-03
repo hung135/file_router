@@ -73,9 +73,12 @@ class Incoming:
 
     def _walk_files(self):
         if hasattr(self, "file_pathern"):
-            return glob.glob(self.path + "/**/" + self.file_pathern, recursive=True)
+            paths = []
+            for t in self.file_pathern:
+                paths.extend(glob.glob(self.path + "/**/" + t, recursive=True))
+            return paths
         else:
-            return glob.glob(self.path+ "/**/", recursive=True)
+            return glob.glob(self.path+ "/**/*", recursive=True)
 
     def save_all(self, session):
         for f in self.files:
