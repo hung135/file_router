@@ -1,33 +1,34 @@
 import os
 import yaml
 import argparse
+import logging
 from sqlalchemy import Column, Integer, Text
 from sqlalchemy.orm import mapper, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-
-# import db
-# from models import Session
-from projectio import ProjectIO
+from projectio.projectio import ProjectIO
 from models import FileRouterHistory, Session
-################################################################################
-# This can go in your actual scripts
-################################################################################
+
 # Do this whenever you need a connection to the DB. (typically once at the top of your script)
 sess = Session()
 
 def yaml_reader(yaml_path=None):
-   file_path=yaml_path or "file_router.yaml"
+   file_path = yaml_path or "file_router.yaml"
    try:
       with open(file_path, "r") as f:
          return yaml.safe_load(f)
    except FileNotFoundError as e:
       print(e)
 
+def generate_logger(logging_path):
+   logging.basicConfig(filename=logging_path, filemode="a", format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s", datefmt="%H:%M:%S",level=logging.DEBUG)
+   logger = logging.getLogger()
+   return logger
 
 def parse_cli():
    parser = argparse.ArgumentParser(description='Process a yaml file')
    parser.add_argument("--yaml", help="Location of the yaml file")
    parser.add_argument("--skeleton", help="Generates a skeleton.yaml file to the directory specified")
+   parser.add_argument("--logging", required=True, help="Where to write the logger too")
    args = parser.parse_args()
    return args 
 
@@ -36,7 +37,7 @@ def create_skeleton(path):
       "project_name1": {
          "incoming": {
             "path": "<string>",
-            "file_pathern": ["glob style of target file; i.e.: *.zip", "file_pathern_2"]
+            "file_pattern": ["glob style of target file; i.e.: *.zip", "file_pattern_2"]
          }, 
          "outgoing": {
             "path": "<string>",
@@ -47,7 +48,7 @@ def create_skeleton(path):
       "project_name2": {
          "incoming": {
             "path": "<string>",
-            "file_pathern": ["glob style of target file; i.e.: *.zip", "file_pathern_2"]
+            "file_pattern": ["glob style of target file; i.e.: *.zip", "file_pattern_2"]
          }, 
          "outgoing": {
             "path": "<string>",
@@ -64,14 +65,11 @@ def create_skeleton(path):
 
 def runner(args):
    config = yaml_reader(args.yaml)
+   logger = generate_logger(args.logging)
    projects = []
    for project in config:
-      proj = ProjectIO(project, **config[project])
+      proj = ProjectIO(project, logger, **config[project])
       proj.run_pipeline(sess)
-      # proj.incoming.save_all(sess)
-      # proj.incoming.files, proj.incoming.mappings = proj.outgoing.rename(proj.incoming.files)
-      # proj.outgoing.file_history(proj.incoming, sess)
-      # proj.outgoing.move_files(proj.incoming.files)
       projects.append(proj)
 
  
@@ -80,22 +78,3 @@ if __name__ == "__main__":
    if args.skeleton:
       create_skeleton(args.skeleton)
    runner(args)
-
-# # Querying
-# for rec in sess.query(PathConfig):
-#    print(rec)
-
-# # Adding
-# new_rec = PathConfig(name="Bob", age=21)
-# sess.add(new_rec)
-# sess.commit()
-
-# # Updating from object
-# for rec in sess.query(Person).filter(Person.name == "John"):
-#    rec.age = 40
-#    sess.add(rec)
-#    sess.commit()
-
-# # Update query
-# update_query = Person.__table__.update().where(Person.name == "John").values(age=40)
-# sess.execute(update_query)

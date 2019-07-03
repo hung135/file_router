@@ -2,7 +2,7 @@
 project1:
   incoming: 
     path: '/workspace/incoming'
-    file_pathern: 
+    file_pattern: 
       - '*.zip'
       - "*.db"
   outgoing: 
