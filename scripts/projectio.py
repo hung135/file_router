@@ -32,14 +32,14 @@ class Outgoing:
         self.project = project
 
     def rename(self, files):
-        files_mapping = []
+        files_mapping = {}
         if hasattr(self, "rename_options"):
             options = RenameOptions()
             for option in self.rename_options:
                 if hasattr(options, option):
                     for i,f in enumerate(files):
                         new = getattr(options, option)(f)
-                        files_mapping.append((f, new))
+                        files_mapping[f] = new
                         os.rename(f, new)
                         files[i] = new
         return (files, files_mapping)
@@ -47,14 +47,14 @@ class Outgoing:
     def file_history(self, incoming, session):
         reg = self.file_path_extract if hasattr(self, "file_path_extract") else None
         options = FileHistory()
-        for files in incoming.mappings:
+        for key in incoming.mappings:
+            files = (key, incoming.mappings[key])
             fn = os.path.basename(files[1])
             md5, size, date, extract = FileHistory.file_information(files[1],reg)
             if all(val is not None for val in [md5, size, date]):
-                for record in session.query(FileRouterHistory).filter(FileRouterHistory.project_name == self.project and FileRouterHistory.incoming_path == files[0]):
+                for record in session.query(FileRouterHistory).filter(FileRouterHistory.project_name == self.project).filter(FileRouterHistory.incoming_path == files[0]):
                     record.outgoing_path = files[1]
-                    record.file_date = str(date)
-                    print(date)
+                    record.file_date = date
                     record.file_md5 = md5
                     record.file_size = size
                     record.file_path_extract = extract

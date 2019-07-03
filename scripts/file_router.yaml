@@ -2,7 +2,7 @@
 project1:
   incoming: 
     path: '/workspace/incoming/'
-    file_pathern: '*.zip'
+    file_pathern: '*.xls'
   outgoing: 
     path: '/workspace/outgoing/'
     rename_options:
