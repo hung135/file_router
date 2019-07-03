@@ -1,10 +1,22 @@
 
 project1:
   incoming: 
-    path: '/workspace/incoming/'
+    path: '/home/dtdata/transfer/connect_direct/frb/download/'
+    file_pathern: 
+      - '*.zip'
+      - '*.csv'
+  outgoing: 
+    path: '/workspace/outgoing/project1'
+    rename_options:
+      - lowercase
+      - snakecase
+    file_path_extract: (\d\d\d\d)
+project2:
+  incoming: 
+    path: '/home/dtdata/transfer/connect_direct/frb/download/'
     file_pathern: '*.xls'
   outgoing: 
-    path: '/workspace/outgoing/'
+    path: '/workspace/outgoing/project2'
     rename_options:
       - lowercase
       - snakecase
