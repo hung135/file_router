@@ -12,12 +12,14 @@ class ProjectIO:
         self.outgoing = Outgoing(project, **config["outgoing"])
         self.incoming = Incoming(project, **config["incoming"])
     
-    def run_pipeline(self):
-        # run incoming first
-        self.incoming
-        # run outcoming next
-        self._executor(self.outcoming)
-
+    def run_pipeline(self, session):
+        # run incoming steps
+        self.incoming.save_all(session)
+        self.incoming.files, self.incoming.mappings = self.outgoing.rename(self.incoming.files)
+        # run outgoing steps
+        self.outgoing.file_history(self.incoming, session)
+        self.outgoing.move_files(self.incoming.files)
+    
     def _executor(self, _obj):
         # idea here: https://stackoverflow.com/questions/37075680/run-all-functions-in-class
         methods = [method for method in dir(_obj) if callable(getattr(_obj, method)) if not method.startswith("_")]
@@ -30,24 +32,34 @@ class Outgoing:
         self.project = project
 
     def rename(self, files):
+        files_mapping = {}
         if hasattr(self, "rename_options"):
             options = RenameOptions()
             for option in self.rename_options:
                 if hasattr(options, option):
                     for i,f in enumerate(files):
                         new = getattr(options, option)(f)
+                        files_mapping[f] = new
                         os.rename(f, new)
                         files[i] = new
-        return files
+        return (files, files_mapping)
 
-    def file_history(self, files):
+    def file_history(self, incoming, session):
         reg = self.file_path_extract if hasattr(self, "file_path_extract") else None
         options = FileHistory()
-        for i,f in enumerate(files):
-            fn = os.path.basename(f)
-            md5, size, date, extract = FileHistory.file_information(f,reg)
-            # save into db
-
+        for key in incoming.mappings:
+            files = (key, incoming.mappings[key])
+            fn = os.path.basename(files[1])
+            md5, size, date, extract = FileHistory.file_information(files[1],reg)
+            if all(val is not None for val in [md5, size, date]):
+                for record in session.query(FileRouterHistory).filter(FileRouterHistory.project_name == self.project).filter(FileRouterHistory.incoming_path == files[0]):
+                    record.outgoing_path = files[1]
+                    record.file_date = date
+                    record.file_md5 = md5
+                    record.file_size = size
+                    record.file_path_extract = extract
+                    session.add(record)
+                session.commit()
     def move_files(self, files):
         if hasattr(self, "path"):
             [shutil.move(f, self.path) for f in files]
@@ -57,31 +69,19 @@ class Incoming:
         self.__dict__.update(config)
         self.project = project
         self.files = self._walk_files()
+        self.mappings = []
 
     def _walk_files(self):
         if hasattr(self, "file_pathern"):
-            return glob.glob(self.path + "/**/" + self.file_pathern, recursive=True)
+            paths = []
+            for t in self.file_pathern:
+                paths.extend(glob.glob(self.path + "/**/" + t, recursive=True))
+            return paths
         else:
-            return glob.glob(self.path+ "/**/", recursive=True)
+            return glob.glob(self.path+ "/**/*", recursive=True)
 
     def save_all(self, session):
         for f in self.files:
-            #  project_name = Column(String(32))
-            # incoming_path = Column(Text)
-            # outgoing_path = Column(Text,unique=True)
-            # file_date = Column(TIMESTAMP)
-            # file_md5 = Column(String(32))
-            # file_size = Column(Integer)
-            # file_path_extract = Column(String(32))
-            new_record = FileRouterHistory(
-                project_name = self.project,
-                incoming_path = f,
-                outgoing_path = f + "unique",
-                file_date = datetime.timestamp(datetime.now()),
-                file_md5 = "",
-                file_size = 0,
-                file_path_extract = ""
-            )
-            new_record = FileRouterHistory(incoming_path=f)
+            new_record = FileRouterHistory(project_name=self.project, incoming_path=f)
             session.add(new_record)
             session.commit()
