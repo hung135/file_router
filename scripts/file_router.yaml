@@ -1,12 +1,12 @@
 project1:
   logging: '/workspace/outgoing/project1/logging.log'
   incoming: 
-    path: '/workspace/xxxx'
+    path: '/workspace/incoming/xxx'
     file_pattern: 
       - '*.zip'
       - '*.csv'
   outgoing: 
-    path: '/workspace/outgoing/project1'
+    path: '/workspace/outgoing/project1/{{yesterday}}/'
     rename_options:
       - lowercase
       - snakecase
@@ -19,7 +19,7 @@ project2:
     file_pathern: '*.xls'
   outgoing: 
     test: 'subdir'
-    path: '/workspace/outgoing/project2/{{test1}}/{{today}}/'
+    path: '/workspace/outgoing/project2/{{today}}/'
     rename_options:
       - lowercase
       - snakecase

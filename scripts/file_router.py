@@ -10,11 +10,18 @@ from models import FileRouterHistory, Session
 from utils import traverse_replace_yaml_tree, recurse_replace_yaml
 import datetime
 
+from datetime import date, timedelta
 
 # Do this whenever you need a connection to the DB. (typically once at the top of your script)
 sess = Session()
 now = datetime.datetime.now()
-today=now.strftime("%Y-%m-%d")
+
+runtime_dict = {"today": now.strftime("%Y-%m-%d") ,
+   "yesterday": (date.today() - timedelta(days=1)).strftime("%Y-%m-%d"),
+   "thisyear": now.strftime("%Y"),
+   "thismonth": now.strftime("%Y-%m")
+}
+
 def yaml_reader(yaml_path=None):
    #print("---------------------------",__file__,os.path.dirname(__file__))
    file_path = yaml_path or f"{os.path.dirname(__file__)}/file_router.yaml"
@@ -72,7 +79,7 @@ def create_skeleton(path):
 def runner(args):
    config = yaml_reader(args.yaml)
    config = traverse_replace_yaml_tree(config)
-   runtime_dict = {"today": today }
+   
    config = recurse_replace_yaml(config,runtime_dict)
    
    projects = []
