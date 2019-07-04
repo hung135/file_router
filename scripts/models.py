@@ -9,10 +9,12 @@ import datetime
 ################################################################################
 engine = db.get_engine()
 meta = db.get_metadata(engine, schema="file_router")
+meta_logging = db.get_metadata(engine, schema="logging")
 Session = sessionmaker(bind=engine)
-
+ 
 # Defining new tables in the DB
 DecBase = declarative_base(bind=engine, metadata=meta)
+DecBase_logging = declarative_base(bind=engine, metadata=meta_logging)
 # class PathConfig(DecBase, db.Base):
 #     __tablename__= "path_config"
 #     id = Column(Integer, primary_key=True)
@@ -31,7 +33,13 @@ class FileRouterHistory(DecBase, db.Base):
     file_path_extract = Column(String(32))
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
 # DecBase.metadata.create_all(engine) #Creates the tables in the DB if they don't exist
-
+class ErrorLog(DecBase_logging,db.Base):
+    error_log_id =Column(Integer, primary_key=True)
+    program_unit =Column(String(128)) 
+    error_code =Column(String(5))  
+    error_timestamp  =Column(DateTime, default=datetime.datetime.utcnow)
+    user_name =Column(String(32))  
+    sql_statement =Column(String(2000)) 
 
 ################################################################################
 # Load the tables you want to work with
