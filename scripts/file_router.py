@@ -7,10 +7,14 @@ from sqlalchemy.orm import mapper, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from projectio.projectio import ProjectIO
 from models import FileRouterHistory, Session
+from utils import traverse_replace_yaml_tree, recurse_replace_yaml
+import datetime
+
 
 # Do this whenever you need a connection to the DB. (typically once at the top of your script)
 sess = Session()
-
+now = datetime.datetime.now()
+today=now.strftime("%Y-%m-%d")
 def yaml_reader(yaml_path=None):
    #print("---------------------------",__file__,os.path.dirname(__file__))
    file_path = yaml_path or f"{os.path.dirname(__file__)}/file_router.yaml"
@@ -64,9 +68,13 @@ def create_skeleton(path):
          yaml.dump(example, f, default_flow_style=False)
    except Exception as e:
       print(e)
-
+ 
 def runner(args):
    config = yaml_reader(args.yaml)
+   config = traverse_replace_yaml_tree(config)
+   runtime_dict = {"today": today }
+   config = recurse_replace_yaml(config,runtime_dict)
+   
    projects = []
    for project in config:
       logger = None

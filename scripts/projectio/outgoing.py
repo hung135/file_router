@@ -26,7 +26,9 @@ class Outgoing:
                     for i,f in enumerate(files):
                         new = getattr(options, option)(f)
                         files_mapping[f] = new
+                        
                         os.rename(f, new)
+                        
                         files[i] = new
                     else:
                         if self.logger is not None: 
@@ -58,7 +60,13 @@ class Outgoing:
         if hasattr(self, "path"):
             for f in files:
                 try:
-                    shutil.move(f, self.path)
+                    
+                    if  os.path.isdir(self.path) == False:
+                         
+                        os.makedirs(os.path.abspath(self.path)  )
+                        
+                    
+                    shutil.move(f, os.path.abspath(self.path))
                 except shutil.Error:
                     if self.logger is not None:
                         self.logger.error("%s can not me moved" %(os.path.basename(f)))

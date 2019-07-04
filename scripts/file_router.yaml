@@ -12,12 +12,14 @@ project1:
       - snakecase
     file_path_extract: (\d\d\d\d)
 project2:
+  test1: testzzz2
   logging: '/workspace/outgoing/project2/logging.log'
   incoming: 
     path: '/home/dtdata/transfer/connect_direct/frb/download/'
     file_pathern: '*.xls'
   outgoing: 
-    path: '/workspace/outgoing/project2'
+    test: 'subdir'
+    path: '/workspace/outgoing/project2/{{test1}}/{{today}}/'
     rename_options:
       - lowercase
       - snakecase
