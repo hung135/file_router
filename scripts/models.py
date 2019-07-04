@@ -24,7 +24,7 @@ class FileRouterHistory(DecBase, db.Base):
     id = Column(Integer, primary_key=True)
     project_name = Column(String(32))
     incoming_path = Column(Text)
-    outgoing_path = Column(Text,unique=True)
+    outgoing_path = Column(Text)
     file_date = Column(String(32))
     file_md5 = Column(String(32))
     file_size = Column(Integer)

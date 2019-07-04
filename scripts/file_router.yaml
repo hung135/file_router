@@ -1,8 +1,7 @@
-
 project1:
-  #logging: '/workspace/outgoing/logging.log'
+  logging: '/workspace/outgoing/project1/logging.log'
   incoming: 
-    path: '/workspace/incoming'
+    path: '/workspace/xxxx'
     file_pattern: 
       - '*.zip'
       - '*.csv'
@@ -13,7 +12,7 @@ project1:
       - snakecase
     file_path_extract: (\d\d\d\d)
 project2:
-  #logging: '/workspace/outgoing/project2/logging.log'
+  logging: '/workspace/outgoing/project2/logging.log'
   incoming: 
     path: '/home/dtdata/transfer/connect_direct/frb/download/'
     file_pathern: '*.xls'

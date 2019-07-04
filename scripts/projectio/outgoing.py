@@ -8,6 +8,10 @@ from logic.file_history import FileHistory
 from models import FileRouterHistory
 
 class Outgoing:
+    #making this visible to linter
+    path = None
+    rename_options = []
+    file_path_extract = None
     def __init__(self, project, logger=None, **config):
         self.__dict__.update(config)
         self.project = project
@@ -26,7 +30,7 @@ class Outgoing:
                         files[i] = new
                     else:
                         if self.logger is not None: 
-                            self.logger.warning("The rename_options funciton %s does not exists" % (option))
+                            self.logger.warning("The rename_options function %s does not exists" % (option))
         return (files, files_mapping)
 
     def file_history(self, incoming, session):
@@ -39,7 +43,7 @@ class Outgoing:
             try:
                 if all(val is not None for val in [md5, size, date]):
                     for record in session.query(FileRouterHistory).filter(FileRouterHistory.project_name == self.project).filter(FileRouterHistory.incoming_path == files[0]):
-                        record.outgoing_path = files[1]
+                        record.outgoing_path = os.path.join(self.path,os.path.basename(files[1]))
                         record.file_date = date
                         record.file_md5 = md5
                         record.file_size = size

@@ -12,7 +12,8 @@ from models import FileRouterHistory, Session
 sess = Session()
 
 def yaml_reader(yaml_path=None):
-   file_path = yaml_path or "file_router.yaml"
+   #print("---------------------------",__file__,os.path.dirname(__file__))
+   file_path = yaml_path or f"{os.path.dirname(__file__)}/file_router.yaml"
    try:
       with open(file_path, "r") as f:
          return yaml.safe_load(f)
