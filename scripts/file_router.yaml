@@ -1,6 +1,6 @@
 
 project1:
-  logging: '/workspace/logging.log'
+  #logging: '/workspace/outgoing/logging.log'
   incoming: 
     path: '/workspace/incoming'
     file_pattern: 
@@ -8,6 +8,17 @@ project1:
       - '*.csv'
   outgoing: 
     path: '/workspace/outgoing/project1'
+    rename_options:
+      - lowercase
+      - snakecase
+    file_path_extract: (\d\d\d\d)
+project2:
+  #logging: '/workspace/outgoing/project2/logging.log'
+  incoming: 
+    path: '/home/dtdata/transfer/connect_direct/frb/download/'
+    file_pathern: '*.xls'
+  outgoing: 
+    path: '/workspace/outgoing/project2'
     rename_options:
       - lowercase
       - snakecase
