@@ -53,6 +53,9 @@ py_script:
 publish:
 	$(MAKE) publish -C publish
 
+tar:
+	perl tarup.pl -t file_router.tar -d scripts/ -e __pycache__ incoming outgoing
+
 #status page  https://static.data.cfpb.local/status/file_router.html
 status:
 	rhobot healthchecks \
