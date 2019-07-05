@@ -62,11 +62,11 @@ def step2_mokc_data(): #using environment variables
         outgoing=xx[project]['outgoing']
         pio=ProjectIO(project=project,incoming=incoming,outgoing=outgoing)
         
-        os.makedirs(os.path.abspath(pio.incoming.path),exist_ok=True)
-        os.makedirs(os.path.abspath(pio.outgoing.path),exist_ok=True) 
+        os.makedirs( pio.incoming.path,exist_ok=True)
+        os.makedirs(pio.outgoing.path,exist_ok=True) 
         #print(yaml_reader('/workspace/scripts/file_router.yaml'))
         lorem = TextLorem(wsep='_', srange=(2,3) )
-        for i in range(10):
+        for i in range(100):
             
             file_name=lorem.sentence()+random.choice(FILE_TYPES)
             with open(os.path.join(pio.incoming.path,file_name),'a') as f:

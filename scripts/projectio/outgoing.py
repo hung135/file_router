@@ -15,6 +15,7 @@ class Outgoing:
     def __init__(self, project, logger=None, **config):
         self.__dict__.update(config)
         self.project = project
+        self.path = os.path.abspath(self.path)
         self.logger = logger
 
     def rename(self, files):
@@ -63,10 +64,10 @@ class Outgoing:
                     
                     if  os.path.isdir(self.path) == False:
                          
-                        os.makedirs(os.path.abspath(self.path)  )
+                        os.makedirs( self.path)
                         
                     
-                    shutil.move(f, os.path.abspath(self.path))
+                    shutil.move(f,  self.path)
                 except shutil.Error:
                     if self.logger is not None:
                         self.logger.error("%s can not me moved" %(os.path.basename(f)))

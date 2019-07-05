@@ -3,11 +3,15 @@ import glob
 from models import FileRouterHistory
 
 class Incoming:
+    file_pattern = []
+    path = None
     def __init__(self, project, logger=None, **config):
         self.__dict__.update(config)
+        self.path = os.path.abspath(self.path)
         self.project = project
         self.logger = logger
         self.files = self._walk_files()
+        
         self.mappings = []
 
     def _walk_files(self):
