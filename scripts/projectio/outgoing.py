@@ -61,12 +61,8 @@ class Outgoing:
         if hasattr(self, "path"):
             for f in files:
                 try:
-                    
-                    if  os.path.isdir(self.path) == False:
-                         
+                    if not os.path.isdir(self.path):
                         os.makedirs( self.path)
-                        
-                    
                     shutil.move(f,  self.path)
                 except shutil.Error:
                     if self.logger is not None:

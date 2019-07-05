@@ -2,15 +2,14 @@ import os
 import yaml
 import argparse
 import logging
+import datetime
+from datetime import date, timedelta
 from sqlalchemy import Column, Integer, Text
 from sqlalchemy.orm import mapper, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from projectio.projectio import ProjectIO
 from models import FileRouterHistory, Session
 from utils import traverse_replace_yaml_tree, recurse_replace_yaml
-import datetime
-
-from datetime import date, timedelta
 
 # Do this whenever you need a connection to the DB. (typically once at the top of your script)
 sess = Session()
@@ -32,6 +31,8 @@ def yaml_reader(yaml_path=None):
       print(e)
 
 def generate_logger(logging_path):
+   # if not os.path.exists(logging_path):
+   #  os.makedirs(logging_path)
    logging.basicConfig(filename=logging_path, filemode="a", format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s,", datefmt="%H:%M:%S",level=logging.DEBUG)
    logger = logging.getLogger()
    return logger

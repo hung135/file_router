@@ -12,6 +12,14 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "Tests",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/tests/test_file_router.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/tests/"
+        },
+        {
             "name": "Router-yaml.py",
             "type": "python",
             "request": "launch",
