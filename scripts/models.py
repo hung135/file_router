@@ -34,12 +34,13 @@ class FileRouterHistory(DecBase, db.Base):
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
 # DecBase.metadata.create_all(engine) #Creates the tables in the DB if they don't exist
 class ErrorLog(DecBase_logging,db.Base):
-    __tablename__= "errorlog"
+    __tablename__= "error_log"
     error_log_id =Column(Integer, primary_key=True)
     program_unit =Column(String(128)) 
     error_code =Column(String(5))  
     error_timestamp  =Column(DateTime, default=datetime.datetime.utcnow)
     user_name =Column(String(32))  
+    error_message =Column(String(2000))  
     sql_statement =Column(String(2000)) 
 
 ################################################################################

@@ -33,7 +33,8 @@
             "request": "launch",
             "program": "${workspaceFolder}/tests/mock_n_run.py",
             "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}/tests/"
+            "cwd": "${workspaceFolder}/tests/",
+            "args": ["-v"]
         }
     ]
 }

@@ -5,6 +5,7 @@ project1:
     file_pattern: 
       - '*.zip'
       - '*.csv'
+      - '*.xls'
   outgoing: 
     path: 'outgoing/project1/1999/{{yesterday}}/'
     rename_options:

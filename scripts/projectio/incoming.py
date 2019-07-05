@@ -1,7 +1,7 @@
 import sys
 import os
 import glob
-from models import FileRouterHistory
+from models import FileRouterHistory,ErrorLog,Session
 
 class Incoming:
     file_pattern = []
@@ -16,6 +16,7 @@ class Incoming:
         self.mappings = []
 
     def _walk_files(self):
+        session=Session()
         try:
             paths = glob.glob(self.path + "/**/*", recursive=True)
             if hasattr(self, "file_pattern"):
@@ -24,7 +25,21 @@ class Incoming:
                     paths_based_on_file_pattern.extend(glob.glob(self.path + "/**/" + t, recursive=True))
                 not_using = list(set(paths) - set(paths_based_on_file_pattern))
                 if self.logger is not None:
-                    [self.logger.warning("Will not process this file %s" % (os.path.basename(fn))) for fn in not_using]
+
+                    # program_unit =Column(String(128)) 
+                    # error_code =Column(String(5))  
+                    # error_timestamp  =Column(DateTime, default=datetime.datetime.utcnow)
+                    # user_name =Column(String(32))  
+                    # sql_statement =Column(String(2000)) 
+                    
+                    
+                    for fn in not_using:
+                        new_record = ErrorLog(program_unit=f'file_router: {self.project}',error_code='?????',user_name='GOCD',
+                        error_message=f'{os.path.basename(fn)}: No matching REGEX in yaml')
+                        session.add(new_record)
+                    
+                        self.logger.warning("Will not process this file %s" % (os.path.basename(fn)))
+                    session.commit()
                 paths = paths_based_on_file_pattern
             paths = [p for p in paths if os.path.basename(p) != "."]
             return paths

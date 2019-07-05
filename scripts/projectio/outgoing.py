@@ -55,6 +55,7 @@ class Outgoing:
             except Exception as e:
                 if self.logger is not None:
                     self.logger.error("Record {0} can not be saved, with error: {1}".format(fn, e))
+                
                 sys.exit(1)
 
     def move_files(self, files):
