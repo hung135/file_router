@@ -70,16 +70,16 @@ class TestFileRouter(unittest.TestCase,Config):
             pio.incoming.save_all(SESS)
             pio.outgoing.move_files(pio.incoming.files)
             self.pio.append(pio) #saving this so we can test base on values that current exists in this object
-            for file in pio.incoming.files:
-                new_path=os.path.join(outgoing_path,os.path.basename(file))
+            for f in pio.incoming.files:
+                new_path=os.path.join(outgoing_path,os.path.basename(f))
                 
                 print("Checking file in Out folder: ",new_path)
                 self.assertTrue(os.path.isfile(new_path))
         #verify db logic here since the meata data still exits
         db=dbconn.DB()
-        for p in pio:
-            for file in p.incoming.files:
-                print(file)
+        for p in self.pio:
+            for f in p.incoming.files:
+                print(f)
     # def test_04_query_db(self):
         
     #     print("------------------  ")

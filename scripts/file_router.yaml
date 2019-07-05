@@ -12,7 +12,6 @@ project1:
       - snakecase
     file_path_extract: (\d\d\d\d)
 project2:
- 
   logging: 'outgoing/project2/logging.log'
   incoming: 
     path: '/home/dtdata/transfer/connect_direct/frb/download/'
@@ -23,4 +22,4 @@ project2:
     rename_options:
       - lowercase
       - snakecase
-    file_path_extract: (\d\d\d\d)
+  file_path_extract: (\d\d\d\d)

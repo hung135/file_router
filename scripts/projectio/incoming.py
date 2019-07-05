@@ -1,3 +1,4 @@
+import sys
 import os
 import glob
 from models import FileRouterHistory
@@ -15,20 +16,30 @@ class Incoming:
         self.mappings = []
 
     def _walk_files(self):
-        paths = glob.glob(self.path + "/**/*", recursive=True)
-        if hasattr(self, "file_pattern"):
-            paths_based_on_file_pattern = []
-            for t in self.file_pattern:
-                paths_based_on_file_pattern.extend(glob.glob(self.path + "/**/" + t, recursive=True))
-            not_using = list(set(paths) - set(paths_based_on_file_pattern))
+        try:
+            paths = glob.glob(self.path + "/**/*", recursive=True)
+            if hasattr(self, "file_pattern"):
+                paths_based_on_file_pattern = []
+                for t in self.file_pattern:
+                    paths_based_on_file_pattern.extend(glob.glob(self.path + "/**/" + t, recursive=True))
+                not_using = list(set(paths) - set(paths_based_on_file_pattern))
+                if self.logger is not None:
+                    [self.logger.warning("Will not process this file %s" % (os.path.basename(fn))) for fn in not_using]
+                paths = paths_based_on_file_pattern
+            paths = [p for p in paths if os.path.basename(p) != "."]
+            return paths
+        except Exception as e:
             if self.logger is not None:
-                [self.logger.warning("Will not process this file %s" % (os.path.basename(fn))) for fn in not_using]
-            paths = paths_based_on_file_pattern
-        paths = [p for p in paths if os.path.basename(p) != "."]
-        return paths
+                self.logger.error("Seomthing went wrong when walking the directory \n {0}".format(e))
+            sys.exit(1)
 
     def save_all(self, session):
-        for f in self.files:
-            new_record = FileRouterHistory(project_name=self.project, incoming_path=f)
-            session.add(new_record)
-            session.commit()
+        try:
+            for f in self.files:
+                new_record = FileRouterHistory(project_name=self.project, incoming_path=f)
+                session.add(new_record)
+                session.commit()
+        except Exception as e:
+            if self.logger is not None:
+                self.logger.error("Seomthing went wrong for the intial save to the DB \n {0}".format(e))
+            sys.exit(1)

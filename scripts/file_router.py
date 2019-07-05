@@ -1,16 +1,16 @@
+import sys
 import os
 import yaml
 import argparse
 import logging
+import datetime
+from datetime import date, timedelta
 from sqlalchemy import Column, Integer, Text
 from sqlalchemy.orm import mapper, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from projectio.projectio import ProjectIO
 from models import FileRouterHistory, Session
 from utils import traverse_replace_yaml_tree, recurse_replace_yaml
-import datetime
-
-from datetime import date, timedelta
 
 # Do this whenever you need a connection to the DB. (typically once at the top of your script)
 sess = Session()
@@ -23,7 +23,6 @@ runtime_dict = {"today": now.strftime("%Y-%m-%d") ,
 }
 
 def yaml_reader(yaml_path=None):
-   #print("---------------------------",__file__,os.path.dirname(__file__))
    file_path = yaml_path or f"{os.path.dirname(__file__)}/file_router.yaml"
    try:
       with open(file_path, "r") as f:
@@ -31,15 +30,24 @@ def yaml_reader(yaml_path=None):
    except FileNotFoundError as e:
       print(e)
 
-def generate_logger(logging_path):
-   logging.basicConfig(filename=logging_path, filemode="a", format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s,", datefmt="%H:%M:%S",level=logging.DEBUG)
+def generate_logger(logging_path, verbose=False):
+   logging.basicConfig(
+      level=40 if not verbose else 30,
+      format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s,",
+      handlers=[
+         logging.FileHandler(filename=logging_path, mode="a"),
+         logging.StreamHandler()
+      ]
+   )
+   #logging.basicConfig(filename=logging_path, filemode="a", format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s,", datefmt="%H:%M:%S",level=logging.DEBUG)
    logger = logging.getLogger()
    return logger
 
 def parse_cli():
    parser = argparse.ArgumentParser(description='Process a yaml file')
-   parser.add_argument("--yaml", help="Location of the yaml file")
-   parser.add_argument("--skeleton", help="Generates a skeleton.yaml file to the directory specified")
+   parser.add_argument("-y","-yaml","--yaml", help="Location of the yaml file")
+   parser.add_argument("-s", "-skeleton", "--skeleton", help="Generates a skeleton.yaml file to the directory specified")
+   parser.add_argument("-v", "-verbose", help="Enable verbose mode", action="store_true")
    args = parser.parse_args()
    return args 
 
@@ -75,6 +83,7 @@ def create_skeleton(path):
          yaml.dump(example, f, default_flow_style=False)
    except Exception as e:
       print(e)
+   sys.exit(0)
  
 def runner(args):
    config = yaml_reader(args.yaml)
@@ -86,7 +95,7 @@ def runner(args):
    for project in config:
       logger = None
       try:
-         logger = generate_logger(config[project]["logging"])
+         logger = generate_logger(config[project]["logging"], args.v)
       except KeyError:
          continue
       proj = ProjectIO(project, logger, **config[project])

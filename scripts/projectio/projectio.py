@@ -1,3 +1,4 @@
+import sys
 from models import FileRouterHistory
 from .incoming import Incoming
 from .outgoing import Outgoing
@@ -8,6 +9,10 @@ class ProjectIO:
         self.incoming = Incoming(project, logger, **config["incoming"])
     
     def run_pipeline(self, session):
+        if len(self.incoming.files) is 0:
+            if self.incoming.logger is not None:
+                self.incoming.logger.error("No files found")
+            sys.exit(1)
         # run incoming steps
         self.incoming.save_all(session)
         self.incoming.files, self.incoming.mappings = self.outgoing.rename(self.incoming.files)

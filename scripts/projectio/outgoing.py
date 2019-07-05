@@ -1,3 +1,4 @@
+import sys
 import os 
 import shutil
 import glob
@@ -27,13 +28,11 @@ class Outgoing:
                     for i,f in enumerate(files):
                         new = getattr(options, option)(f)
                         files_mapping[f] = new
-                        
                         os.rename(f, new)
-                        
                         files[i] = new
-                    else:
-                        if self.logger is not None: 
-                            self.logger.warning("The rename_options function %s does not exists" % (option))
+                else:
+                    if self.logger is not None: 
+                        self.logger.warning("The rename_options function %s does not exists" % (option))
         return (files, files_mapping)
 
     def file_history(self, incoming, session):
@@ -42,7 +41,7 @@ class Outgoing:
         for key in incoming.mappings:
             files = (key, incoming.mappings[key])
             fn = os.path.basename(files[0])
-            md5, size, date, extract = FileHistory.file_information(files[1],reg)
+            md5, size, date, extract = FileHistory.file_information(self.logger, files[1],reg)
             try:
                 if all(val is not None for val in [md5, size, date]):
                     for record in session.query(FileRouterHistory).filter(FileRouterHistory.project_name == self.project).filter(FileRouterHistory.incoming_path == files[0]):
@@ -55,19 +54,17 @@ class Outgoing:
                     session.commit()
             except Exception as e:
                 if self.logger is not None:
-                    self.logger.error("Record %s can not be saved" % (fn))
+                    self.logger.error("Record {0} can not be saved, with error: {1}".format(fn, e))
+                sys.exit(1)
 
     def move_files(self, files):
         if hasattr(self, "path"):
             for f in files:
                 try:
-                    
-                    if  os.path.isdir(self.path) == False:
-                         
+                    if not os.path.isdir(self.path):
                         os.makedirs( self.path)
-                        
-                    
                     shutil.move(f,  self.path)
                 except shutil.Error:
                     if self.logger is not None:
                         self.logger.error("%s can not me moved" %(os.path.basename(f)))
+                    sys.exit(1)
