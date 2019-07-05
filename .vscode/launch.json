@@ -18,6 +18,14 @@
             "program": "${workspaceFolder}/scripts/file_router.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/scripts/"
+        },
+        {
+            "name": "MockFileNRun.py",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/tests/mock_n_run.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/tests/"
         }
     ]
 }

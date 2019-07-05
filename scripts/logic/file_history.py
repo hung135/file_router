@@ -24,8 +24,15 @@ class FileHistory():
     def file_path_extract(f, reg):
         try:
             reg = re.compile(reg)
-            found = re.findall(reg, f)
-            return None if len(found) == 0 else found[-1]
+            #found = re.findall(reg, f)
+            found=re.search(reg,f) or ''
+            if found:
+                #todo
+                #currently searches from left to right and finds the first...
+                #we want the last item that matches regex
+                extracted_data=found.group()
+                return extracted_data
+            return None  
         except re.errors:
             print("invalid regex, skipping")
             return None
