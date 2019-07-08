@@ -1,3 +1,16 @@
+project2:
+  logging: 'outgoing/project2/logging.log'
+  incoming: 
+    path: '/home/dtdata/transfer/connect_direct/frb/download/'
+    file_pattern: '*.xls'
+  outgoing: 
+    
+    path: 'outgoing/project2/{{today}}/'
+    rename_options:
+      - lowercase
+      - snakecase
+  file_path_extract: (\d\d\d\d)
+
 project1:
   logging: '/workspace/outgoing/project1/logging.log'
   incoming: 
@@ -10,15 +23,3 @@ project1:
       - lowercase
       - snakecase
     file_path_extract: (\d\d\d\d)
-# project2:
-#   logging: 'outgoing/project2/logging.log'
-#   incoming: 
-#     path: '/home/dtdata/transfer/connect_direct/frb/download/'
-#     file_pattern: '*.xls'
-#   outgoing: 
-    
-#     path: 'outgoing/project2/{{today}}/'
-#     rename_options:
-#       - lowercase
-#       - snakecase
-#   file_path_extract: (\d\d\d\d)

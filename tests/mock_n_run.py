@@ -15,7 +15,7 @@ from utils.utils import traverse_replace_yaml_tree ,recurse_replace_yaml
 import datetime
 
 from datetime import date, timedelta
-
+MOCKSIZE=0
 # Do this whenever you need a connection to the DB. (typically once at the top of your script)
 sess = Session()
 now = datetime.datetime.now()
@@ -67,7 +67,7 @@ def step2_mokc_data(): #using environment variables
         os.makedirs(pio.outgoing.path,exist_ok=True) 
         #print(yaml_reader('/workspace/scripts/file_router.yaml'))
         lorem = TextLorem(wsep='_', srange=(2,3) )
-        for i in range(100):
+        for i in range(MOCKSIZE):
             
             file_name=lorem.sentence()+random.choice(FILE_TYPES)
             with open(os.path.join(pio.incoming.path,file_name),'a') as f:

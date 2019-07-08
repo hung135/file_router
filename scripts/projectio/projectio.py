@@ -11,8 +11,8 @@ class ProjectIO:
     def run_pipeline(self, session):
         if len(self.incoming.files) is 0:
             if self.incoming.logger is not None:
-                self.incoming.logger.error("No files found")
-            sys.exit(1)
+                self.incoming.logger.error(f"No files found For Project: {self.incoming.project}")
+            #sys.exit(1)
         # run incoming steps
         self.incoming.save_all(session)
         self.incoming.files, self.incoming.mappings = self.outgoing.rename(self.incoming.files)
