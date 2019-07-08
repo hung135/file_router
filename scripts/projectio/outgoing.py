@@ -6,7 +6,7 @@ import re
 
 from logic.rename_options import RenameOptions
 from logic.file_history import FileHistory
-from models import FileRouterHistory
+from database.models import FileRouterHistory
 
 class Outgoing:
     #making this visible to linter

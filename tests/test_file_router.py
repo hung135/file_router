@@ -10,7 +10,7 @@ from lorem.text import TextLorem
 import shutil   
 import py_dbutils.rdbms.postgres as dbconn 
 import random
-from models import FileRouterHistory, Session,DecBase,engine
+from database.models import FileRouterHistory, Session,DecBase,engine
 __author__ = "Hung Nguyen"
 __copyright__ = "Hung Nguyen"
 __license__ = "mit"

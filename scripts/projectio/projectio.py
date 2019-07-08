@@ -1,5 +1,5 @@
 import sys
-from models import FileRouterHistory
+from database.models import FileRouterHistory
 from .incoming import Incoming
 from .outgoing import Outgoing
 

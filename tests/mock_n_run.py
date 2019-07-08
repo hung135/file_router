@@ -8,9 +8,9 @@ from lorem.text import TextLorem
 import shutil   
 import py_dbutils.rdbms.postgres as dbconn 
 import random
-from models import FileRouterHistory, Session,DecBase,engine
+from database.models import FileRouterHistory, Session,DecBase,engine
 from file_router import parse_cli,runner
-from utils import traverse_replace_yaml_tree ,recurse_replace_yaml
+from utils.utils import traverse_replace_yaml_tree ,recurse_replace_yaml
  
 import datetime
 
