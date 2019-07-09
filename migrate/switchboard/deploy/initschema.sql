@@ -2,6 +2,6 @@
 
 BEGIN;
 
-CREATE SCHEMA switchboard authorization operational_dba;
+CREATE SCHEMA switchboard AUTHORIZATION operational_dba;
 
 COMMIT;

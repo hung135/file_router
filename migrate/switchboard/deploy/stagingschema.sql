@@ -2,6 +2,6 @@
 
 BEGIN;
 
-CREATE SCHEMA stg authorization operational_dba;
+CREATE SCHEMA stg AUTHORIZATION operational_dba;
 
 COMMIT;
