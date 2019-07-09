@@ -1,0 +1,40 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Tests",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/tests/test_file_router.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/tests/"
+        },
+        {
+            "name": "Router-yaml.py",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/file_router.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/scripts/"
+        },
+        {
+            "name": "MockFileNRun.py",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/tests/mock_n_run.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/tests/",
+            "args": ["-v"]
+        }
+    ]
+}

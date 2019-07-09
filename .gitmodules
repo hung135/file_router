@@ -1,0 +1,3 @@
+[submodule "migrate/pg-common"]
+	path = migrate/pg-common
+	url = https://github.cfpb.gov/data/pg-common.git

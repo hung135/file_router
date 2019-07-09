@@ -1,0 +1,37 @@
+rhobot_usage:
+
+NAME:
+   Rhobot - Rhobot is a database development tool that uses DevOps best practices.
+
+USAGE:
+   rhobot [global options] command [command options] [arguments...]
+
+VERSION:
+   0.3.0
+
+COMMANDS:
+     healthchecks  HEALTHCHECK_FILE [--dburi DATABASE_URI] [--report REPORT_FILE] [--email DISTRIBUTION_FILE][--schema SCHEMA] [--table TABLE]
+     artifacts     PIPELINE STAGE JOB[--pipeline-run PIPELINE_RUN] [--stage-run STAGE_RUN] [--artifact-path ARTIFACT_PATH] [--save SAVE_PATH]
+     pipeline      Interact with GoCD pipeline
+     help, h       Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   --loglevel value, --lvl value  sets the log level for Rhobot
+   --help, -h                     show help
+   --print-version, -V            print only the version
+
+
+
+  #Example healthchecks Usage:
+  #rhobot --loglevel info schemas/file_router/healthchecks/file_router.sql.yml
+  #rhobot healthchecks schemas/file_router/healthchecks/file_router.sql.yml --email report.emails.yml
+  #rhobot healthchecks schemas/file_router/healthchecks/file_router.sql.yml --report healthcheck.report.html
+  #rhobot healthchecks schemas/file_router/healthchecks/file_router.sql.yml --dburi postgres://user:password@host:port/database
+  #rhobot healthchecks schemas/file_router/healthchecks/file_router.sql.yml --schema logging --table healthchecks
+  #rhobot healthchecks schemas/file_router/healthchecks/file_router.sql.yml || $(FORCE)
+
+
+  #Example pipeline Usage:
+  #rhobot pipeline push pipelines/deliver.prod.json GROUP
+  #rhobot pipeline clone test pipelines/test.json
+  #rhobot pipeline pull pipelines/deliver.prod.json
