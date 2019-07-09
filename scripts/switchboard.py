@@ -4,6 +4,9 @@ import yaml
 import argparse
 import logging
 import datetime
+import re
+import pkgutil 
+import inspect
 from datetime import date, timedelta
 from sqlalchemy import Column, Integer, Text
 from sqlalchemy.orm import mapper, sessionmaker
@@ -72,22 +75,74 @@ def create_skeleton(path):
    except Exception as e:
       print(e)
    sys.exit(0)
- 
+
+def validate_yaml(config):
+   op = ReanmeOptions()
+   for project in confg:
+      logic = config[project]["logic"]
+      for l in logic:
+         if hasattr(op, l):
+            continue
+         else:
+            print("ERROR {0}".format(l))
+            sys.exit(1)
+
+def get_function_names():    
+   import logic
+   package = logic
+   prefix = package.__name__ + "."
+   classes_methods = {}
+   for importer, modname, ispkg in pkgutil.iter_modules(package.__path__, prefix):
+         module = __import__(modname, fromlist="dummy")
+         for _class in inspect.getmembers(module, inspect.isclass):
+            if prefix in _class[1].__module__:
+               method_list = [func for func in dir(_class[1]) if callable(getattr(_class[1], func)) and not func.startswith("__")]
+               name = re.findall(".\w+", _class[1].__module__)
+               classes_methods[name[-1][1:]] = method_list
+   return classes_methods
+
+def validate_yaml(config):
+   funcs = get_function_names()
+   for project in config:
+      try:
+         incoming = config[project]["incoming"]
+         outgoing = config[project]["outgoing"]
+         if "path" not in incoming.keys() or "path" not in outgoing.keys():
+            print("Path not found in incoming/outgoing for project: {0}".format(project))
+            sys.exit(1)
+      except KeyError:
+         print("Path not found in incoming/outgoing for project: {0}".format(project))
+         sys.exit(1)
+
+      try:
+         for logic in config[project]["outgoing"]["logic"]:
+            if logic in list(funcs.keys()):
+               for func in config[project]["outgoing"]["logic"][logic]:
+                  if func not in funcs[logic]:
+                     print("Invalid yaml option: {0}".format(func))
+                     sys.exit(1)
+      except KeyError:
+         continue # did not have value
+
 def runner(args):
    config = yaml_reader(args.yaml)
    config = traverse_replace_yaml_tree(config)
    config = recurse_replace_yaml(config,runtime_dict)
-   
-   projects = []
+   validate_yaml(config)
+   aborted_projects = {}
    for project in config:
       try:
          logger = Logger(project, sess, config[project]["logging"], args.v)
       except KeyError:
          logger = Logger(project, sess, None, args.v)
       proj = ProjectIO(project, logger.logger, **config[project])
-      proj.run_pipeline(sess)
-      projects.append(proj)
+      errors = proj.run_pipeline(sess)
+      if errors is not None:
+         aborted_projects[project] = errors
 
+   if len(aborted_projects) != 0:
+      [print("Project: %s, reason: %s" % (key, val)) for key, val in aborted_projects.items()]
+      
  
 if __name__ == "__main__":
    args = parse_cli()
