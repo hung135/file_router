@@ -10,7 +10,7 @@ data_load:
 FORCE ?= false
 health_checks:
 	( \
-		rhobot --loglevel info healthchecks schemas/file_router/healthchecks/file_router.sql.yml --report healthcheck.report.html \
+		rhobot --loglevel info healthchecks schemas/switchboard/healthchecks/switchboard.sql.yml --report healthcheck.report.html \
 	) || $(FORCE)
 
 initialize_db:
@@ -26,11 +26,11 @@ warden:
 schema_migrate: migration_pgcommon migration_project
 	sqitch --engine pg --plan-file migrate/pg-common/migrations/sqitch.plan  status --project pg-common \
 		db:pg://'$(value PGUSER)':'$(value PGPASSWORD)'@'$(value PGHOST)':$(PGPORT)/$(PGDATABASE);
-	sqitch --engine pg --plan-file migrate/file_router/sqitch.plan status --project file_router \
+	sqitch --engine pg --plan-file migrate/switchboard/sqitch.plan status --project switchboard \
 		db:pg://'$(value PGUSER)':'$(value PGPASSWORD)'@'$(value PGHOST)':$(PGPORT)/$(PGDATABASE);
 
 migration_project: initialize_db
-	cd migrate/file_router; \
+	cd migrate/switchboard; \
 	sqitch deploy \
 		db:pg://'$(value PGUSER)':'$(value PGPASSWORD)'@'$(value PGHOST)':$(PGPORT)/$(PGDATABASE)
 
@@ -40,7 +40,7 @@ migration_pgcommon: initialize_db
 		db:pg://'$(value PGUSER)':'$(value PGPASSWORD)'@'$(value PGHOST)':$(PGPORT)/$(PGDATABASE)
 
 nuke_migrations:
-	cd migrate/file_router; \
+	cd migrate/switchboard; \
 	sqitch revert -y \
 		db:pg://'$(value PGUSER)':'$(value PGPASSWORD)'@'$(value PGHOST)':$(PGPORT)/$(PGDATABASE)
 
@@ -54,13 +54,13 @@ publish:
 	$(MAKE) publish -C publish
 
 tar:
-	perl tarup.pl -t file_router.tar -d scripts/ -e __pycache__ incoming outgoing
+	perl tarup.pl -t switchboard.tar -d scripts/ -e __pycache__ incoming outgoing
 
-#status page  https://static.data.cfpb.local/status/file_router.html
+#status page  https://static.data.cfpb.local/status/switchboard.html
 status:
 	rhobot healthchecks \
-	schemas/file_router/healthchecks/file_router.sql.yml \
+	schemas/switchboard/healthchecks/switchboard.sql.yml \
 	--report status_page.html \
-	--template schemas/file_router/status/status_page.html
-	cp status_page.html /home/dtwork/static/status/file_router.html
-	#chmod 766 /home/dtwork/static/status/file_router.html
+	--template schemas/switchboard/status/status_page.html
+	cp status_page.html /home/dtwork/static/status/switchboard.html
+	#chmod 766 /home/dtwork/static/status/switchboard.html

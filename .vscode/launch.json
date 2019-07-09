@@ -15,7 +15,7 @@
             "name": "Tests",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/tests/test_file_router.py",
+            "program": "${workspaceFolder}/tests/test_switchboard.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/tests/"
         },
@@ -23,7 +23,7 @@
             "name": "Router-yaml.py",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/scripts/file_router.py",
+            "program": "${workspaceFolder}/scripts/switchboard.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/scripts/"
         },

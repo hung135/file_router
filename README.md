@@ -1,6 +1,6 @@
 # Incoming File Router
 
-> **Database Name:** file_router  
+> **Database Name:** switchboard  
 > **Point of Contact:** Hung Nguyen [hung.nguyen@cfpb.gov](mailto:hung.nguyen@cfpb.gov)  
 > **Database Type:** development  
 > **Data Catalog URL:** Insert URL Here  
@@ -36,7 +36,7 @@
 
 | AD Group                     | PSQL Role                    | Description                    |
 | ---------------------------- | ---------------------------- | ------------------------------ |
-| file_router_readonly | file_router_readonly | Read only access to all tables |
+| switchboard_readonly | switchboard_readonly | Read only access to all tables |
 
 <a name="backup"></a>
 ## Backup and Retention Requirements

@@ -23,12 +23,12 @@ GLOBAL OPTIONS:
 
 
   #Example healthchecks Usage:
-  #rhobot --loglevel info schemas/file_router/healthchecks/file_router.sql.yml
-  #rhobot healthchecks schemas/file_router/healthchecks/file_router.sql.yml --email report.emails.yml
-  #rhobot healthchecks schemas/file_router/healthchecks/file_router.sql.yml --report healthcheck.report.html
-  #rhobot healthchecks schemas/file_router/healthchecks/file_router.sql.yml --dburi postgres://user:password@host:port/database
-  #rhobot healthchecks schemas/file_router/healthchecks/file_router.sql.yml --schema logging --table healthchecks
-  #rhobot healthchecks schemas/file_router/healthchecks/file_router.sql.yml || $(FORCE)
+  #rhobot --loglevel info schemas/switchboard/healthchecks/switchboard.sql.yml
+  #rhobot healthchecks schemas/switchboard/healthchecks/switchboard.sql.yml --email report.emails.yml
+  #rhobot healthchecks schemas/switchboard/healthchecks/switchboard.sql.yml --report healthcheck.report.html
+  #rhobot healthchecks schemas/switchboard/healthchecks/switchboard.sql.yml --dburi postgres://user:password@host:port/database
+  #rhobot healthchecks schemas/switchboard/healthchecks/switchboard.sql.yml --schema logging --table healthchecks
+  #rhobot healthchecks schemas/switchboard/healthchecks/switchboard.sql.yml || $(FORCE)
 
 
   #Example pipeline Usage:

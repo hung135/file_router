@@ -8,7 +8,7 @@ from .db import get_engine, get_metadata, Base
 # Do this once at the top of the file (or better yet in a models.py so multiple scripts can use it)
 ################################################################################
 engine = get_engine()
-meta = get_metadata(engine, schema="file_router")
+meta = get_metadata(engine, schema="switchboard")
 meta_logging = get_metadata(engine, schema="logging")
 Session = sessionmaker(bind=engine)
  
@@ -22,7 +22,7 @@ DecBase_logging = declarative_base(bind=engine, metadata=meta_logging)
 #     inbound_directory = Column(Text)
 #     out_directory = Column(Text)
 class FileRouterHistory(DecBase, Base):
-    __tablename__= "file_router_history"
+    __tablename__= "switchboard_history"
     id = Column(Integer, primary_key=True)
     project_name = Column(String(32))
     incoming_path = Column(Text)

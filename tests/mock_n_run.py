@@ -2,14 +2,14 @@ import sys
   
 import os
  
-from file_router import yaml_reader
+from switchboard import yaml_reader
 from projectio.projectio import ProjectIO
 from lorem.text import TextLorem
 import shutil   
 import py_dbutils.rdbms.postgres as dbconn 
 import random
 from database.models import FileRouterHistory, Session,DecBase,DecBase_logging,engine
-from file_router import parse_cli,runner
+from switchboard import parse_cli,runner
 from utils.utils import traverse_replace_yaml_tree ,recurse_replace_yaml
  
 import datetime
@@ -31,7 +31,7 @@ FILE_TYPES = ['zip','txt','csv','db','xls']
 SESS = Session()
 DecBase.metadata.create_all(engine)
 DecBase_logging.metadata.create_all(engine)
-yaml_config= yaml_reader('/workspace/scripts/file_router.yaml')
+yaml_config= yaml_reader('/workspace/scripts/switchboard.yaml')
 def clean_working_dir(folder: str):
     import os, shutil
      
@@ -65,7 +65,7 @@ def step2_mokc_data(): #using environment variables
         
         os.makedirs( pio.incoming.path,exist_ok=True)
         os.makedirs(pio.outgoing.path,exist_ok=True) 
-        #print(yaml_reader('/workspace/scripts/file_router.yaml'))
+        #print(yaml_reader('/workspace/scripts/switchboard.yaml'))
         lorem = TextLorem(wsep='_', srange=(2,3) )
         for i in range(MOCKSIZE):
             
@@ -77,7 +77,7 @@ def step2_mokc_data(): #using environment variables
 if __name__ == '__main__':
     step1_clean_dirs()
     step2_mokc_data()
-    import file_router
+    import switchboard
     args = parse_cli()
      
     runner(args)

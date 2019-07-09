@@ -1,7 +1,7 @@
 {
   "label_template": "${COUNT}",
   "enable_pipeline_locking": false,
-  "name": "file_router",
+  "name": "switchboard",
   "template": null,
   "parameters": [],
   "environment_variables": [
@@ -18,7 +18,7 @@
     {
       "secure": false,
       "name": "PGDATABASE",
-      "value": "file_router"
+      "value": "switchboard"
     },
     {
       "secure": false,
@@ -65,7 +65,7 @@
     {
       "type": "git",
       "attributes": {
-        "url": "https://github.cfpb.gov/databases/file_router.git",
+        "url": "https://github.cfpb.gov/databases/switchboard.git",
         "destination": "project",
         "filter": null,
         "name": null,
@@ -259,7 +259,7 @@
                         {
                             "name": "PGDATABASE_INTERNAL",
                             "secure": false,
-                            "value": "file_router"
+                            "value": "switchboard"
                         },
                         {
                             "name": "PGUSER_INTERNAL",
@@ -284,7 +284,7 @@
                         {
                             "name": "PGDATABASE_EXTERNAL",
                             "secure": false,
-                            "value": "file_router"
+                            "value": "switchboard"
                         },
                         {
                             "name": "PGUSER_EXTERNAL",

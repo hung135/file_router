@@ -1,5 +1,5 @@
 
-create table file_router.file_router_history (
+create table switchboard.switchboard_history (
 	id serial not null, 
 	project_name varchar(32), 
 	incoming_path text, 
@@ -9,10 +9,10 @@ create table file_router.file_router_history (
 	file_size integer, 
 	file_path_extract varchar(32), 
 	created_date timestamp without time zone, 
-	constraint file_router_history_pkey primary key (id), 
-	constraint file_router_history_outgoing_path_key unique (outgoing_path)
+	constraint switchboard_history_pkey primary key (id), 
+	constraint switchboard_history_outgoing_path_key unique (outgoing_path)
 )
 
 ;
-ALTER TABLE file_router.file_router_history
+ALTER TABLE switchboard.switchboard_history
 	OWNER TO operational_dba;

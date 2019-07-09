@@ -1,0 +1,5 @@
+%syntax-version=1.0.0
+%project=switchboard
+%uri=https://github.cfpb.gov/databases/switchboard
+
+tables/switchboard.switchboard_history 2019-07-02T17:03:53Z root <root@f7012d51ef0c> # Adding switchboard.switchboard_history.sql

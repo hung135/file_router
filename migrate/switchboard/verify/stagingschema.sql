@@ -1,4 +1,4 @@
--- Verify file_router schema on pg
+-- Verify switchboard schema on pg
 
 BEGIN;
 

@@ -1,4 +1,4 @@
--- Deploy file_router schema to pg
+-- Deploy switchboard schema to pg
 
 BEGIN;
 

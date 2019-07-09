@@ -1,4 +1,4 @@
--- Revert file_router schema from pg
+-- Revert switchboard schema from pg
 
 BEGIN;
 

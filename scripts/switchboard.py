@@ -24,7 +24,7 @@ runtime_dict = {"today": now.strftime("%Y-%m-%d") ,
 }
 
 def yaml_reader(yaml_path=None):
-   file_path = yaml_path or f"{os.path.dirname(__file__)}/file_router.yaml"
+   file_path = yaml_path or f"{os.path.dirname(__file__)}/switchboard.yaml"
    try:
       with open(file_path, "r") as f:
          return yaml.safe_load(f)

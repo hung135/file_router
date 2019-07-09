@@ -4,7 +4,7 @@ sys.path.append("..scripts")
 import unittest
 import os
 from config_parent import Config
-from file_router import yaml_reader
+from switchboard import yaml_reader
 from projectio.projectio import ProjectIO
 from lorem.text import TextLorem
 import shutil   
@@ -18,7 +18,7 @@ __license__ = "mit"
 FILE_TYPES = ['zip','txt','csv','db','xls']
 SESS = Session()
 DecBase.metadata.create_all(engine)
-yaml_config= yaml_reader('/workspace/scripts/file_router.yaml')
+yaml_config= yaml_reader('/workspace/scripts/switchboard.yaml')
 def clean_working_dir(folder: str):
     import os, shutil
      
@@ -50,7 +50,7 @@ class TestFileRouter(unittest.TestCase,Config):
             
             os.makedirs(os.path.abspath(pio.incoming.path),exist_ok=True)
             os.makedirs(os.path.abspath(pio.outgoing.path),exist_ok=True) 
-            #print(yaml_reader('/workspace/scripts/file_router.yaml'))
+            #print(yaml_reader('/workspace/scripts/switchboard.yaml'))
             lorem = TextLorem(wsep='_', srange=(2,3) )
             for i in range(10):
                 

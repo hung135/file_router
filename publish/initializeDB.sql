@@ -3,8 +3,8 @@
 SELECT op_dba.create_database(:V1,'development');
 
 --uncomment for dev on local machines
---CREATE DATABASE file_router;
---CREATE ROLE file_router;
+--CREATE DATABASE switchboard;
+--CREATE ROLE switchboard;
 
 --### Extensions
 --if the database uses any extensions they should be created here for production
