@@ -3,6 +3,7 @@ from sqlalchemy import Column, Integer, Text, TIMESTAMP, String, DateTime
 from sqlalchemy.orm import mapper, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from .db import get_engine, get_metadata, Base
+import os
 
 ################################################################################
 # Do this once at the top of the file (or better yet in a models.py so multiple scripts can use it)
@@ -44,19 +45,31 @@ class ErrorLog(DecBase_logging, Base):
     sql_statement =Column(String(2000)) 
 
 class Logging(DecBase_logging, Base):
-    __tablename__ = "log"
+    __tablename__ = "load_status"
     load_status_id = Column(Integer, primary_key=True)
     program_unit = Column(String(128))
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
+    start_date= Column(DateTime, default=datetime.datetime.utcnow)
+    end_date= Column(DateTime, default=datetime.datetime.utcnow)
     program_unit_type_code = Column(String(25))
     file_path = Column(String(2000))
-    created_by = Column(String(25)
-
+    created_by = Column(String(25))
+    table_name = Column(String(64))
+    success = Column(String(1))
+    previous_record_count = Column(Integer, default=0)
+    current_record_count= Column(Integer, default=0)
+    records_inserted= Column(Integer, default=0)
+    records_updated= Column(Integer, default=0)
+    records_deleted= Column(Integer, default=0)
+    created_by = Column(String(64),default = 'None')
     def __init__(self, project_name=None, level=None, msg=None):
         self.program_unit = project_name
         self.program_unit_type_code = level
         self.file_path = msg
-
+        self.table_name = 'switchboard'
+        self.success = '1'
+        self.end_date= datetime.datetime.utcnow()
+        self.created_by = os.environ.get('PGUSER','None')
 #DecBase_logging.metadata.create_all(engine)
 # load_status_id integer NOT NULL DEFAULT nextval('logging.load_status_id_seq'::regclass),
 #     table_name character varying(64) COLLATE pg_catalog."default" NOT NULL,

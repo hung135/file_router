@@ -15,7 +15,7 @@ from utils.utils import traverse_replace_yaml_tree ,recurse_replace_yaml
 import datetime
 
 from datetime import date, timedelta
-MOCKSIZE=0
+MOCKSIZE=10
 # Do this whenever you need a connection to the DB. (typically once at the top of your script)
 sess = Session()
 now = datetime.datetime.now()
