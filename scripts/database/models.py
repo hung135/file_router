@@ -44,7 +44,7 @@ class ErrorLog(DecBase_logging, Base):
     sql_statement =Column(String(2000)) 
 
 class Logging(DecBase_logging, Base):
-    __tablename__ = "log"
+    __tablename__ = "load_status"
     load_status_id = Column(Integer, primary_key=True)
     program_unit = Column(String(128))
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
