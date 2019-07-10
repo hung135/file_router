@@ -45,15 +45,31 @@ class ErrorLog(DecBase_logging, Base):
 
 class Logging(DecBase_logging, Base):
     __tablename__ = "log"
-    log_id = Column(Integer, primary_key=True)
-    project_name = Column(String(128))
-    date = Column(DateTime, default=datetime.datetime.utcnow)
-    logging_type = Column(String(25))
-    log_msg = Column(String(2000))
+    load_status_id = Column(Integer, primary_key=True)
+    program_unit = Column(String(128))
+    created_date = Column(DateTime, default=datetime.datetime.utcnow)
+    program_unit_type_code = Column(String(25))
+    file_path = Column(String(2000))
+    created_by = Column(String(25)
 
     def __init__(self, project_name=None, level=None, msg=None):
-        self.project_name = project_name
-        self.logging_type = level
-        self.log_msg = msg
+        self.program_unit = project_name
+        self.program_unit_type_code = level
+        self.file_path = msg
 
 #DecBase_logging.metadata.create_all(engine)
+# load_status_id integer NOT NULL DEFAULT nextval('logging.load_status_id_seq'::regclass),
+#     table_name character varying(64) COLLATE pg_catalog."default" NOT NULL,
+#     program_unit character varying(128) COLLATE pg_catalog."default" NOT NULL,
+#     program_unit_type_code character varying(10) COLLATE pg_catalog."default" NOT NULL,
+#     file_path text COLLATE pg_catalog."default" NOT NULL,
+#     success character(1) COLLATE pg_catalog."default" NOT NULL,
+#     start_date timestamp without time zone NOT NULL,
+#     end_date timestamp without time zone NOT NULL,
+#     previous_record_count bigint NOT NULL,
+#     current_record_count bigint NOT NULL,
+#     records_inserted integer NOT NULL,
+#     records_updated integer NOT NULL,
+#     records_deleted integer NOT NULL,
+#     created_by character varying(32) COLLATE pg_catalog."default" NOT NULL,
+#     created_date timestamp without time zone NOT NULL,
