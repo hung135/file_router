@@ -74,28 +74,37 @@ def create_skeleton(path):
       print(e)
    sys.exit(0)
 
+def _print_msg(msg, val):
+   print(msg.format(val))
+   sys.exit(1)
+
 def validate_yaml(config):
    funcs = get_logic_function_names()
    for project in config:
+      message = "Path not found in incoming/outgoing for project: {0}"
       try:
          incoming = config[project]["incoming"]
          outgoing = config[project]["outgoing"]
          if "path" not in incoming.keys() or "path" not in outgoing.keys():
-            print("Path not found in incoming/outgoing for project: {0}".format(project))
-            sys.exit(1)
+            _print_msg(message, project)
       except KeyError:
-         print("Path not found in incoming/outgoing for project: {0}".format(project))
-         sys.exit(1)
+         _print_msg(message, project)
       try:
+         message = "Invalid yaml option: {0}"
          for logic in config[project]["outgoing"]["logic"]:
             if logic in list(funcs.keys()):
-               for func in config[project]["outgoing"]["logic"][logic]:
+               if type(config[project]["outgoing"]["logic"][logic]) is list:
+                  for func in config[project]["outgoing"]["logic"][logic]:
+                     if func not in funcs[logic]:
+                        _print_msg(message, logic)
+               else:
+                  if logic not in funcs[logic]:
+                     _print_msg(message, logic)
+            else:
+               _print_msg(message, logic)
+      except KeyError as e:
+         _print_msg(message, logic)
 
-                  if func not in funcs[logic]:
-                     print("Invalid yaml option: {0}".format(func))
-                     sys.exit(1)
-      except KeyError:
-         continue # did not have value, not all logic is requried
 
 def runner(args):
    config = yaml_reader(args.yaml)

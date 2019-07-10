@@ -53,7 +53,6 @@ class Logging(DecBase_logging, Base):
     end_date= Column(DateTime, default=datetime.datetime.utcnow)
     program_unit_type_code = Column(String(25))
     file_path = Column(String(2000))
-    created_by = Column(String(25))
     table_name = Column(String(64))
     success = Column(String(1))
     previous_record_count = Column(Integer, default=0)
@@ -62,6 +61,7 @@ class Logging(DecBase_logging, Base):
     records_updated= Column(Integer, default=0)
     records_deleted= Column(Integer, default=0)
     created_by = Column(String(64),default = 'None')
+ 
     def __init__(self, project_name=None, level=None, msg=None):
         self.program_unit = project_name
         self.program_unit_type_code = level
