@@ -5,15 +5,13 @@ import argparse
 import logging
 import datetime
 import re
-import pkgutil 
-import inspect
 from datetime import date, timedelta
 from sqlalchemy import Column, Integer, Text
 from sqlalchemy.orm import mapper, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from projectio.projectio import ProjectIO
 from database.models import FileRouterHistory, Session
-from utils.utils import traverse_replace_yaml_tree, recurse_replace_yaml
+from utils.utils import traverse_replace_yaml_tree, recurse_replace_yaml, get_logic_function_names
 from utils.logger import Logger
 
 # Do this whenever you need a connection to the DB. (typically once at the top of your script)
@@ -77,32 +75,7 @@ def create_skeleton(path):
    sys.exit(0)
 
 def validate_yaml(config):
-   op = ReanmeOptions()
-   for project in confg:
-      logic = config[project]["logic"]
-      for l in logic:
-         if hasattr(op, l):
-            continue
-         else:
-            print("ERROR {0}".format(l))
-            sys.exit(1)
-
-def get_function_names():    
-   import logic
-   package = logic
-   prefix = package.__name__ + "."
-   classes_methods = {}
-   for importer, modname, ispkg in pkgutil.iter_modules(package.__path__, prefix):
-         module = __import__(modname, fromlist="dummy")
-         for _class in inspect.getmembers(module, inspect.isclass):
-            if prefix in _class[1].__module__:
-               method_list = [func for func in dir(_class[1]) if callable(getattr(_class[1], func)) and not func.startswith("__")]
-               name = re.findall(".\w+", _class[1].__module__)
-               classes_methods[name[-1][1:]] = method_list
-   return classes_methods
-
-def validate_yaml(config):
-   funcs = get_function_names()
+   funcs = get_logic_function_names()
    for project in config:
       try:
          incoming = config[project]["incoming"]
@@ -113,16 +86,16 @@ def validate_yaml(config):
       except KeyError:
          print("Path not found in incoming/outgoing for project: {0}".format(project))
          sys.exit(1)
-
       try:
          for logic in config[project]["outgoing"]["logic"]:
             if logic in list(funcs.keys()):
                for func in config[project]["outgoing"]["logic"][logic]:
+
                   if func not in funcs[logic]:
                      print("Invalid yaml option: {0}".format(func))
                      sys.exit(1)
       except KeyError:
-         continue # did not have value
+         continue # did not have value, not all logic is requried
 
 def runner(args):
    config = yaml_reader(args.yaml)
