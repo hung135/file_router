@@ -7,6 +7,7 @@ import re
 from logic.rename_options import RenameOptions
 from logic.file_history import FileHistory
 from database.models import FileRouterHistory
+from utils.customexceptions import ExitProjectException
 
 class Outgoing:
     #making this visible to linter
@@ -23,7 +24,7 @@ class Outgoing:
         files_mapping = {}
         if hasattr(self, "rename_options"):
             options = RenameOptions()
-            for option in self.rename_options:
+            for option in self.logic["rename_options"]:
                 if hasattr(options, option):
                     for i,f in enumerate(files):
                         new = getattr(options, option)(f)
@@ -36,7 +37,7 @@ class Outgoing:
         return (files, files_mapping)
 
     def file_history(self, incoming, session):
-        reg = self.file_path_extract if hasattr(self, "file_path_extract") else None
+        reg = self.logic["file_path_extract"] if hasattr(self, "file_path_extract") else None
         options = FileHistory()
         for key in incoming.mappings:
             files = (key, incoming.mappings[key])
@@ -55,7 +56,6 @@ class Outgoing:
             except Exception as e:
                 if self.logger is not None:
                     self.logger.error("Record {0} can not be saved, with error: {1}".format(fn, e))
-                
                 sys.exit(1)
 
     def move_files(self, files):
@@ -68,4 +68,4 @@ class Outgoing:
                 except shutil.Error:
                     if self.logger is not None:
                         self.logger.error("%s can not me moved" %(os.path.basename(f)))
-                    sys.exit(1)
+                    raise ExitProjectException("Files can not be moved")
