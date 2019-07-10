@@ -5,7 +5,7 @@ import glob
 import re
 
 from logic.rename_options import RenameOptions
-from logic.file_history import FileHistory
+from logic.file_path_extract import FileHistory
 from database.models import FileRouterHistory
 from utils.customexceptions import ExitProjectException
 

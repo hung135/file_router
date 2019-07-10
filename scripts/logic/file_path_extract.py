@@ -21,8 +21,8 @@ class FileHistory():
                 logger.warning("Something went wrong trying to get file information for: {0}, e: {1}".format(f, e))
             return (None, None, None, None)
 
-    @staticmethod
-    def file_path_extract(f, reg, logger):
+    @classmethod
+    def file_path_extract(self, f, reg, logger):
         try:
             reg = re.compile(reg)
             found = re.findall(reg, f)

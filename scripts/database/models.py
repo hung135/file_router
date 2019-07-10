@@ -50,7 +50,7 @@ class Logging(DecBase_logging, Base):
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
     program_unit_type_code = Column(String(25))
     file_path = Column(String(2000))
-    created_by = Column(String(25)
+    created_by = Column(String(25))
 
     def __init__(self, project_name=None, level=None, msg=None):
         self.program_unit = project_name
