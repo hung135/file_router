@@ -22,7 +22,7 @@ class Outgoing:
 
     def rename(self, files):
         files_mapping = {}
-        if hasattr(self, "rename_options"):
+        if "rename_options" in self.logic:
             options = RenameOptions()
             for option in self.logic["rename_options"]:
                 if hasattr(options, option):
@@ -37,7 +37,7 @@ class Outgoing:
         return (files, files_mapping)
 
     def file_history(self, incoming, session):
-        reg = self.logic["file_path_extract"] if hasattr(self, "file_path_extract") else None
+        reg = self.logic["file_path_extract"] if "file_path_extract" in self.logic else None
         options = FileHistory()
         for key in incoming.mappings:
             files = (key, incoming.mappings[key])
