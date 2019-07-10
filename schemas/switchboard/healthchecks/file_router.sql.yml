@@ -1,7 +1,0 @@
-name: Data integrity checks for Incoming File Router
-tests:
--
-  expected: true
-  query: "SELECT (SELECT count(*) FROM information_schema.schemata)  >= 1"
-  title: "0. database exist?"
-  severity: "fatal"
