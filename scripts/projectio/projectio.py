@@ -1,5 +1,6 @@
 import sys
 from database.models import FileRouterHistory
+from utils.customexceptions import ExitProjectException
 from .incoming import Incoming
 from .outgoing import Outgoing
 
@@ -9,16 +10,22 @@ class ProjectIO:
         self.incoming = Incoming(project, logger, **config["incoming"])
     
     def run_pipeline(self, session):
-        if len(self.incoming.files) is 0:
-            if self.incoming.logger is not None:
-                self.incoming.logger.error(f"No files found For Project: {self.incoming.project}")
-            #sys.exit(1)
-        # run incoming steps
-        self.incoming.save_all(session)
-        self.incoming.files, self.incoming.mappings = self.outgoing.rename(self.incoming.files)
-        # run outgoing steps
-        self.outgoing.file_history(self.incoming, session)
-        self.outgoing.move_files(self.incoming.files)
+        try:
+            if len(self.incoming.files) is 0:
+                if self.incoming.logger is not None:
+                    self.incoming.logger.error(f"No files found For Project: {self.incoming.project}")
+                return "Files not found"
+            else:
+                # run incoming steps
+                self.incoming.save_all(session)
+                self.incoming.files, self.incoming.mappings = self.outgoing.rename(self.incoming.files)
+                # run outgoing steps
+                self.outgoing.file_history(self.incoming, session)
+                self.outgoing.move_files(self.incoming.files)
+            return None
+        except ExitProjectException as e:
+            return e.message
+
     
     def _executor(self, _obj):
         # idea here: https://stackoverflow.com/questions/37075680/run-all-functions-in-class

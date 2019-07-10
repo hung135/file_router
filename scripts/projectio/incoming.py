@@ -1,7 +1,9 @@
 import sys
 import os
 import glob
+
 from database.models import FileRouterHistory, ErrorLog, Session
+from utils.customexceptions import ExitProjectException
 
 class Incoming:
     file_pattern = []
@@ -45,8 +47,8 @@ class Incoming:
             return paths
         except Exception as e:
             if self.logger is not None:
-                self.logger.error("Seomthing went wrong when walking the directory \n {0}".format(e))
-            sys.exit(1)
+                self.logger.error("Something went wrong when walking the directory \n {0}".format(e))
+            raise ExitProjectException("Something went wrong when walking the directory")
 
     def save_all(self, session):
         try:
