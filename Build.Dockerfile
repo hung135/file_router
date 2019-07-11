@@ -12,8 +12,8 @@ RUN easy_install-3.6 pip && \
     pip3 install pyinstaller
 
 RUN mkdir -p Build/
-COPY scripts/ Build/scripts/
 WORKDIR Build/
-RUN pip3 install -r scripts/requirements.txt
-RUN pyinstaller scripts/switchboard.py -w --onefile
-RUN tar -czvf switchboard.tar -C dist/ .
+ENV PYTHONPATH=/Build/scripts/
+# RUN pip3 install -r scripts/requirements.txt
+# RUN pyinstaller scripts/switchboard.py -w --onefile
+# RUN tar -czvf switchboard.tar -C dist/ .
