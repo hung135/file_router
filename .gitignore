@@ -4,3 +4,4 @@ env_vars.rc
 **/__pycache__/
 incoming/
 outgoing/
+.DS_Store
