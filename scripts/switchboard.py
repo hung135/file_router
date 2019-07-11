@@ -105,7 +105,6 @@ def validate_yaml(config):
       except KeyError as e:
          _print_msg(message, logic)
 
-
 def runner(args):
    config = yaml_reader(args.yaml)
    config = traverse_replace_yaml_tree(config)

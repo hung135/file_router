@@ -8,12 +8,9 @@ services:
 
     volumes:
       - ..:/workspace
-      # This lets you avoid setting up Git again in the container
       - ~/.gitconfig:/root/.gitconfig
-
-    # Overrides default command so things don't shut down after the process ends.
+      - /var/run/docker.sock:/var/run/docker.sock
     command: sleep infinity
-    
     links: 
       - db
     environment:
@@ -26,21 +23,20 @@ services:
     depends_on:
       - db 
         #condition: service_healthy
+
   db:
     image: postgres
     restart: unless-stopped
-
     environment:
       POSTGRES_PASSWORD: docker
+
   pgadmin4:
     image: dpage/pgadmin4
     restart: always
     ports: 
       - 8080:80
- 
     volumes:
       - ~/.pgadmincompose:/var/lib/pgadmin
-
     environment:
         PGADMIN_DEFAULT_EMAIL: docker
         PGADMIN_DEFAULT_PASSWORD: docker

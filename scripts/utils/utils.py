@@ -1,6 +1,5 @@
 import os
 import re
-import pkgutil 
 import inspect
 
 #Stolen from here
@@ -80,15 +79,20 @@ def replace_yaml_with_runtime(yaml : dict, runtime_data : dict):
     item = recurse_replace_yaml(yaml,runtime_data)
 
 def get_logic_function_names():    
-   import logic
-   package = logic
-   prefix = package.__name__ + "."
-   classes_methods = {}
-   for importer, modname, ispkg in pkgutil.iter_modules(package.__path__, prefix):
-         module = __import__(modname, fromlist="dummy")
-         for _class in inspect.getmembers(module, inspect.isclass):
+    """ 
+        Changed from using pkgutil to only needing inspect since pyinstaller doesn't play well with
+        pkgutil. 
+    """
+    import logic
+    package = logic
+    prefix = package.__name__ + "."
+    classes_methods = {}
+    func_names = list(filter(lambda val: "__" not in val, dir(package)))
+    for func in func_names:
+        module = __import__(prefix+func, fromlist="dummy")
+        for _class in inspect.getmembers(module, inspect.isclass):
             if prefix in _class[1].__module__:
-               method_list = [func for func in dir(_class[1]) if callable(getattr(_class[1], func)) and not func.startswith("__")]
-               name = re.findall(".\w+", _class[1].__module__)
-               classes_methods[name[-1][1:]] = method_list
-   return classes_methods
+                method_list = [func for func in dir(_class[1]) if callable(getattr(_class[1], func)) and not func.startswith("__")]
+                name = re.findall(".\w+", _class[1].__module__)
+                classes_methods[func] = method_list
+    return classes_methods

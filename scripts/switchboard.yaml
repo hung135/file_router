@@ -19,9 +19,9 @@ project1:
   outgoing: 
     path: 'outgoing/project1/1999/{{yesterday}}/'
     logic:
-      # rename_options:
-      #   - lowercase
-      #   - snakecase
+      rename_options:
+        - lowercase
+        - snakecase
       file_path_extract: (\d\d\d\d)
     # Make sure GoCD username and pasword env var is in place. 
     api: "http://www.google.com"
