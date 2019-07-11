@@ -12,8 +12,7 @@ class ProjectIO:
     def run_pipeline(self, session):
         try:
             if len(self.incoming.files) is 0:
-                if self.incoming.logger is not None:
-                    self.incoming.logger.error(f"No files found For Project: {self.incoming.project}")
+                self.incoming.logger.error(f"No files found For Project: {self.incoming.project}")
                 return "Files not found"
             else:
                 # run incoming steps
@@ -22,6 +21,7 @@ class ProjectIO:
                 # run outgoing steps
                 self.outgoing.file_history(self.incoming, session)
                 self.outgoing.move_files(self.incoming.files)
+                self.outgoing.call_api()
             return None
         except ExitProjectException as e:
             return e.message

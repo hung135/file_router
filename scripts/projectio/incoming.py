@@ -46,8 +46,7 @@ class Incoming:
             paths = [p for p in paths if os.path.basename(p) != "."]
             return paths
         except Exception as e:
-            if self.logger is not None:
-                self.logger.error("Something went wrong when walking the directory \n {0}".format(e))
+            self.logger.error("Something went wrong when walking the directory \n {0}".format(e))
             raise ExitProjectException("Something went wrong when walking the directory")
 
     def save_all(self, session):
@@ -57,6 +56,5 @@ class Incoming:
                 session.add(new_record)
                 session.commit()
         except Exception as e:
-            if self.logger is not None:
-                self.logger.error("Seomthing went wrong for the intial save to the DB \n {0}".format(e))
+            self.logger.error("Seomthing went wrong for the intial save to the DB \n {0}".format(e))
             sys.exit(1)

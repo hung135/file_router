@@ -3,11 +3,13 @@ import os
 import shutil
 import glob
 import re
-
 from logic.rename_options import RenameOptions
 from logic.file_path_extract import FileHistory
 from database.models import FileRouterHistory
 from utils.customexceptions import ExitProjectException
+
+import requests
+from requests.auth import HTTPBasicAuth
 
 class Outgoing:
     #making this visible to linter
@@ -22,7 +24,7 @@ class Outgoing:
 
     def rename(self, files):
         files_mapping = {}
-        if hasattr(self, "rename_options"):
+        if "rename_options" in self.logic:
             options = RenameOptions()
             for option in self.logic["rename_options"]:
                 if hasattr(options, option):
@@ -37,7 +39,7 @@ class Outgoing:
         return (files, files_mapping)
 
     def file_history(self, incoming, session):
-        reg = self.logic["file_path_extract"] if hasattr(self, "file_path_extract") else None
+        reg = self.logic["file_path_extract"] if "file_path_extract" in self.logic else None
         options = FileHistory()
         for key in incoming.mappings:
             files = (key, incoming.mappings[key])
@@ -54,9 +56,29 @@ class Outgoing:
                         session.add(record)
                     session.commit()
             except Exception as e:
-                if self.logger is not None:
-                    self.logger.error("Record {0} can not be saved, with error: {1}".format(fn, e))
+                self.logger.error("Record {0} can not be saved, with error: {1}".format(fn, e))
                 sys.exit(1)
+    
+    def call_api(self):
+        try:
+            if hasattr(self, "api"):
+                #user, passwd = (os.environ["username"], os.environ["password"])
+                user, passwd = ("hi", "pass")
+                headers = {"Content-Type": "application/json", "Accept": "application/vnd.go.cd.v1+json"}
+                data = {"jobs": ["jobs"]}
+                auth = HTTPBasicAuth("user", "password")
+                response = requests.post(
+                    self.api,
+                    auth=auth,
+                    headers=headers,
+                    data=data
+                )
+                if response.status_code != requests.codes.ok:
+                    self.logger.error("Launch project \"%s\" to api: \"%s\" wasn't succesful" % (self.project, self.api))
+        except KeyError as e:
+            self.logger.error("Missing api creds for project \"%s\" and api \"%s\"" % (self.project, self.api))
+        except requests.exceptions.MissingSchema as e:
+            self.logger.error("Invalid api url \"%s\" %s" % (self.api, e))
 
     def move_files(self, files):
         if hasattr(self, "path"):
@@ -66,6 +88,5 @@ class Outgoing:
                         os.makedirs( self.path)
                     shutil.move(f,  self.path)
                 except shutil.Error:
-                    if self.logger is not None:
-                        self.logger.error("%s can not me moved" %(os.path.basename(f)))
+                    self.logger.error("%s can not me moved" %(os.path.basename(f)))
                     raise ExitProjectException("Files can not be moved")
