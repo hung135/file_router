@@ -5,3 +5,4 @@ env_vars.rc
 incoming/
 outgoing/
 .DS_Store
+github.key
