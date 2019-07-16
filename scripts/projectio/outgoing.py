@@ -3,13 +3,12 @@ import os
 import shutil
 import glob
 import re
+import requests
 from logic.rename_options import RenameOptions
 from logic.file_path_extract import FileHistory
 from database.models import FileRouterHistory
-from utils.customexceptions import ExitProjectException
-
-import requests
-from requests.auth import HTTPBasicAuth
+from utils.customexceptions import ExitProjectException, InvalidAPIVersion
+from utils.utils import call_api
 
 class Outgoing:
     #making this visible to linter
@@ -62,23 +61,17 @@ class Outgoing:
     def call_api(self):
         try:
             if hasattr(self, "api"):
-                #user, passwd = (os.environ["username"], os.environ["password"])
-                user, passwd = ("hi", "pass")
-                headers = {"Content-Type": "application/json", "Accept": "application/vnd.go.cd.v1+json"}
-                data = {"jobs": ["jobs"]}
-                auth = HTTPBasicAuth("user", "password")
-                response = requests.post(
-                    self.api,
-                    auth=auth,
-                    headers=headers,
-                    data=data
-                )
+                call_api(self.api["uri"], self.api["pipeline"])
                 if response.status_code != requests.codes.ok:
                     self.logger.error("Launch project \"%s\" to api: \"%s\" wasn't succesful" % (self.project, self.api))
         except KeyError as e:
             self.logger.error("Missing api creds for project \"%s\" and api \"%s\"" % (self.project, self.api))
         except requests.exceptions.MissingSchema as e:
             self.logger.error("Invalid api url \"%s\" %s" % (self.api, e))
+        except InvalidAPIVersion as e:
+            self.logger.error(e)
+        except Exception as e:
+            self.logger.error("Invalid api call: \n %s" % (e))
 
     def move_files(self, files):
         if hasattr(self, "path"):
