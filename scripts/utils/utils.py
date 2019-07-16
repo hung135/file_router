@@ -109,8 +109,9 @@ def call_api(api, pipeline):
     """
     version_request = reqeusts.get(api + "/version", headers={"Accept":"application/vnd.go.cd.v1+json"})
     if response.status_code != requests.codes.ok:
-        raise ConnectionError("Bad version check") version = json.loads(version_request)["version"] 
+        raise ConnectionError("Bad version check") 
         
+    version = json.loads(version_request)["version"] 
     if version != "17.10.0":
         raise InvalidAPIVersion("We expected a GoCD verison of 17.10.0 but got %s" % (version))
 

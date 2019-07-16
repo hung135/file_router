@@ -64,6 +64,8 @@ class Outgoing:
                 call_api(self.api["uri"], self.api["pipeline"])
                 if response.status_code != requests.codes.ok:
                     self.logger.error("Launch project \"%s\" to api: \"%s\" wasn't succesful" % (self.project, self.api))
+                else:
+                    self.logger.warning("Project %s to api's pipeline: %s has launched" % (self.project, self.api["pipeline"]))
         except KeyError as e:
             self.logger.error("Missing api creds for project \"%s\" and api \"%s\"" % (self.project, self.api))
         except requests.exceptions.MissingSchema as e:
