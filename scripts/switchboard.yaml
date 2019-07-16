@@ -24,4 +24,8 @@ project1:
         - snakecase
       file_path_extract: (\d\d\d\d)
     # Make sure GoCD username and pasword env var is in place. 
-    api: "http://www.google.com"
+    # make sure we pass in the GoCD api pipeline;
+    # https://ci.example.com/go/api
+    api: 
+      uri: "uri"
+      pipeline: "pipe"

@@ -1,6 +1,10 @@
 import os
 import re
+import json
 import inspect
+import requests
+
+from utils.customexceptions import InvalidAPIVersion
 
 #Stolen from here
 #https://thispointer.com/python-how-to-get-list-of-files-in-directory-and-sub-directories/
@@ -96,3 +100,28 @@ def get_logic_function_names():
                 name = re.findall(".\w+", _class[1].__module__)
                 classes_methods[func] = method_list
     return classes_methods
+
+
+def call_api(api, pipeline):
+    """ 
+        API headers for GoCD.v > 19 
+            headers = {"Content-Type": "application/json", "Accept":"application/vnd.go.cd.v1+json"}
+    """
+    version_request = reqeusts.get(api + "/version", headers={"Accept":"application/vnd.go.cd.v1+json"})
+    if response.status_code != requests.codes.ok:
+        raise ConnectionError("Bad version check") 
+        
+    version = json.loads(version_request)["version"] 
+    if version != "17.10.0":
+        raise InvalidAPIVersion("We expected a GoCD verison of 17.10.0 but got %s" % (version))
+
+    #user, passwd = (os.environ["username"], os.environ["password"])
+    user, passwd = ("bad_username", "bad_password")
+    headers =  {"Confirm": "true"}
+    response = requests.post(
+        "%s/%s/schedule" % (api, pipeline),
+        auth=(user, passwd),
+        headers=headers,
+        verify=False
+    )
+    return response

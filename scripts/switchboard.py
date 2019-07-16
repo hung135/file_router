@@ -51,7 +51,11 @@ def create_skeleton(path):
          "outgoing": {
             "path": "<string>",
             "rename_options": ["rename_option1", "rename_option2"],
-            "file_path_extract": "(\\d\\d\\d\\d)"
+            "file_path_extract": "(\\d\\d\\d\\d)",
+            "api": {
+               "uri": "uri",
+               "pipeline": "pipeline"
+            }
          }
       },
       "project_name2": {
@@ -63,7 +67,11 @@ def create_skeleton(path):
          "outgoing": {
             "path": "<string>",
             "rename_options": ["rename_option1", "rename_option2"],
-            "file_path_extract": "(\\d\\d\\d\\d)"         
+            "file_path_extract": "(\\d\\d\\d\\d)",
+            "api": {
+               "uri": "uri",
+               "pipeline": "pipeline"
+            }
          }
       }
    }
