@@ -1,3 +1,4 @@
+git rev-parse HEAD >version.txt
 docker build -t builder -f Build.Dockerfile .
 #ßdocker run -it -v /tmp/deploy-ready/:/Build/output builder  
 
