@@ -37,6 +37,7 @@ def parse_cli():
    parser.add_argument("-y","-yaml","--yaml", help="Location of the yaml file")
    parser.add_argument("-s", "-skeleton", "--skeleton", help="Generates a skeleton.yaml file to the directory specified")
    parser.add_argument("-v", "-verbose", help="Enable verbose mode", action="store_true")
+   parser.add_argument("--version", help="Version of executable", action="store_true")
    args = parser.parse_args()
    return args 
 
@@ -85,6 +86,12 @@ def create_skeleton(path):
 def _print_msg(msg, val):
    print(msg.format(val))
    sys.exit(1)
+
+def print_version():
+   with open("version.txt", "r") as f:
+      v = f.read()
+   print(v)
+   sys.exit(0)
 
 def validate_yaml(config):
    funcs = get_logic_function_names()
@@ -137,4 +144,6 @@ if __name__ == "__main__":
    args = parse_cli()
    if args.skeleton:
       create_skeleton(args.skeleton)
+   if args.version:
+      print_version()
    runner(args)
