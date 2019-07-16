@@ -115,8 +115,7 @@ def call_api(api, pipeline):
     if version != "17.10.0":
         raise InvalidAPIVersion("We expected a GoCD verison of 17.10.0 but got %s" % (version))
 
-    #user, passwd = (os.environ["username"], os.environ["password"])
-    user, passwd = ("bad_username", "bad_password")
+    user, passwd = (os.environ["gocd-username"], os.environ["gocd-passwd"])
     headers =  {"Confirm": "true"}
     response = requests.post(
         "%s/%s/schedule" % (api, pipeline),

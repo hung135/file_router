@@ -26,6 +26,8 @@ project1:
     # Make sure GoCD username and pasword env var is in place. 
     # make sure we pass in the GoCD api pipeline;
     # https://ci.example.com/go/api
+    # This expects: gocd-username and gocd-passwd to be set in
+    #   environment variables 
     api: 
       uri: "uri"
       pipeline: "pipe"
