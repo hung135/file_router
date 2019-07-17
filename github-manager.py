@@ -3,6 +3,7 @@ import sys
 import re
 import math
 import argparse
+import requests
 from github import Github
 
 def _error_out(msg):
@@ -11,6 +12,12 @@ def _error_out(msg):
 
 def _file_exist(path):
     return os.access(path, os.W_OK)
+
+def _get_release_based_tag(releases, tag):
+    release = [release for release in releases if release.tag_name == tag][0]
+    if not release:
+        _error_out("Release tag %s does not exists" % args.tag)
+    return release
 
 def create_release(repository, releases, name, message, tag=None):
     if not tag:
@@ -25,19 +32,33 @@ def upload_asset(filep, tag=None, release=None, releases=None):
     if not _file_exist(filep):
         _error_out("File not found")
     if not release:
-        release = [release for release in releases if release.tag_name == tag][0]
-        if not release:
-            _error_out("Release tag %s does not exists" % args.tag)
+        release = _get_release_based_tag(releases, tag)
     release.upload_asset(filep)
 
+def download_asset(filep, tag, releases):
+    try:
+        release = _get_release_based_tag(releases, tag)
+        uri = release.get_assets()[0].browser_download_url
+        response = requests.get(uri, allow_redirects=True)
+        fname = re.findall("filename=(.+)", response.headers.get("content-disposition"))[0]
+        print("Writing file %s" % fname)
+        open(filep + "/%s" % fname, "wb").write(response.content)
+    except Exception as e:
+        _error_out("Couldn't download file to %s based on tag %s, \n e: %e" % (filep, tag, e))
 
 def parse_cli():
    parser = argparse.ArgumentParser(description='Manages release assets for a Github release')
 
-   required_groups = parser.add_argument_group("Required")
-   required_groups.add_argument("-k", "--key", required=True, help="Key or path to .key file")
+   required_groups = parser.add_argument_group("Required (key not required if downloading")
+   required_groups.add_argument("-k", "--key", required="-dl" not in sys.argv, help="Key or path to .key file")
    required_groups.add_argument("-r", "--repo", required=True, help="Repository name in the format of <user>/<project_name>")
 
+   # Download
+   download_group = parser.add_argument_group("Download")
+   download_group.add_argument("-dl", "--download", help="Download the non-source code tag")
+   download_group.add_argument("-o", "--output", help="Output directory for the download")
+
+    
    # delete
    delete_group =parser.add_argument_group("Delete")
    delete_group.add_argument("-d", "--delete", help="Delete the following release name")
@@ -57,6 +78,7 @@ def parse_cli():
    extras_group.add_argument("-p", "--print", help="Print all release tags", action="store_true")
    extras_group.add_argument("-e", "--enterprise", help="Using enterprise Github account enter the address needed to connect to; provide a url like so: https://github.com/")
    extras_group.add_argument("-t", "--tag", required="-u" in sys.argv, help="Target tag")
+   extras_group.add_argument("-gl", "--get_latest", help="Get latest tag", action="store_true")
 
    args = parser.parse_args()
    return args 
@@ -70,10 +92,17 @@ def read_key(path_or_key):
     return path_or_key # key
 
 def run(args):
-    key = read_key(args.key)
-    gh = Github(base_url=args.e + "/api/v3", login_or_token=key) if args.enterprise else Github(key)
+    if args.download:
+        gh = Github()
+    else:
+        key = read_key(args.key)
+        gh = Github(base_url=args.e + "/api/v3", login_or_token=key) if args.enterprise else Github(key)
     repository = gh.get_repo(args.repo)
     releases = repository.get_releases()
+
+    if args.download:
+        download_asset(args.output, args.download, releases)
+        print("Download complete")
 
     if args.create:
         release = create_release(repository, releases, args.create, args.message, args.tag)
@@ -92,6 +121,10 @@ def run(args):
 
     if args.print:
         [print("%s | %s" %(release.title, release.tag_name)) for release in releases]
+    
+    if args.get_latest:
+        print(releases[0].tag_name) # 0 is always the last
+
 
 if __name__ == "__main__":
     args = parse_cli()
