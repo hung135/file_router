@@ -33,16 +33,21 @@ def upload_asset(filep, tag=None, release=None, releases=None):
         _error_out("File not found")
     if not release:
         release = _get_release_based_tag(releases, tag)
+    filep = os.path.abspath(filep)
     release.upload_asset(filep)
 
 def download_asset(filep, tag, releases):
     try:
+        if not _file_exist(filep):
+            filep = os.path.abspath(filep)
+            os.mkdir(filep)
         release = _get_release_based_tag(releases, tag)
         uri = release.get_assets()[0].browser_download_url
         response = requests.get(uri, allow_redirects=True)
         fname = re.findall("filename=(.+)", response.headers.get("content-disposition"))[0]
         print("Writing file %s" % fname)
-        open(filep + "/%s" % fname, "wb").write(response.content)
+        filep = os.path.abspath(filep + "/%s" % fname)
+        open(filep).write(response.content)
     except Exception as e:
         _error_out("Couldn't download file to %s based on tag %s, \n e: %e" % (filep, tag, e))
 
@@ -85,6 +90,7 @@ def parse_cli():
 
 def read_key(path_or_key):
     if _file_exist(path_or_key):
+        path_or_key =os.path.abspath(path_or_key)
         with open(path_or_key, "r") as f:
             key = f.read()
             f.close()
