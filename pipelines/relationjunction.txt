@@ -1,0 +1,4 @@
+If you plan to sync with salesforce is your project, consider using a relational junction pipeline 
+
+cookiecutter https://github.cfpb.gov/frank0631/relational-junction/tree/master/template
+

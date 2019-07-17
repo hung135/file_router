@@ -1,0 +1,9 @@
+**/env_vars.rc
+env_vars.rc
+*/env/
+**/__pycache__/
+incoming/
+outgoing/
+.DS_Store
+github.key
+scripts/version.py
