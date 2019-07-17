@@ -13,6 +13,8 @@ from projectio.projectio import ProjectIO
 from database.models import FileRouterHistory, Session
 from utils.utils import traverse_replace_yaml_tree, recurse_replace_yaml, get_logic_function_names
 from utils.logger import Logger
+from version import version_dict
+import pprint
 
 # Do this whenever you need a connection to the DB. (typically once at the top of your script)
 sess = Session()
@@ -88,9 +90,11 @@ def _print_msg(msg, val):
    sys.exit(1)
 
 def print_version():
-   with open("version.txt", "r") as f:
-      v = f.read()
-   print(v)
+   #with open("version.txt", "r") as f:
+   #   v = f.read()
+   
+ 
+   pprint.pprint(version_dict)
    sys.exit(0)
 
 def validate_yaml(config):
