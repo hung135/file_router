@@ -6,3 +6,4 @@ incoming/
 outgoing/
 .DS_Store
 github.key
+scripts/version.py
