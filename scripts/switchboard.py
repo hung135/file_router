@@ -137,7 +137,7 @@ def runner(args):
          logger = Logger(project, sess, config[project]["logging"], args.v, args.dry)
       except KeyError:
          logger = Logger(project, sess, None, args.v, args.dry)
-      proj = ProjectIO(project, logger.logger, args.dry, **config[project])
+      proj = ProjectIO(project, logger.logger, args.dry, args.v, **config[project])
       errors = proj.run_pipeline(sess)
       if errors is not None:
          aborted_projects[project] = errors

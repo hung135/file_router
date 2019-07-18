@@ -6,9 +6,9 @@ from .incoming import Incoming
 from .outgoing import Outgoing
 
 class ProjectIO:
-    def __init__(self, project, logger=None, dry=False, **config):
-        self.outgoing = Outgoing(project, logger, dry, **config["outgoing"])
-        self.incoming = Incoming(project, logger, dry, **config["incoming"])
+    def __init__(self, project, logger=None, dry=False, verbose=False, **config):
+        self.outgoing = Outgoing(project, logger, dry, verbose, **config["outgoing"])
+        self.incoming = Incoming(project, logger, dry, verbose, **config["incoming"])
         self.dry = dry
         self.project = project
 

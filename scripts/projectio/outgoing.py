@@ -15,12 +15,13 @@ class Outgoing:
     path = None
     rename_options = []
     file_path_extract = None
-    def __init__(self, project, logger=None, dry=False, **config):
+    def __init__(self, project, logger=None, dry=False, verbose=False, **config):
         self.__dict__.update(config)
         self.project = project
         self.path = os.path.abspath(self.path)
         self.logger = logger
         self.dry = dry
+        self.verbose = verbose
 
     def rename(self, files):
         files_mapping = {}
@@ -28,6 +29,7 @@ class Outgoing:
             options = RenameOptions()
             for option in self.logic["rename_options"]:
                 if hasattr(options, option):
+                    if self.verbose: print("Running rename_option: %s" % option)
                     for i,f in enumerate(files):
                         new = getattr(options, option)(f)
                         files_mapping[f] = new
@@ -41,6 +43,7 @@ class Outgoing:
 
     def file_history(self, incoming, session):
         reg = self.logic["file_path_extract"] if "file_path_extract" in self.logic else None
+        if self.verbose: print("Found regex for file_path_extract %s, now saving file history to db" % reg) if reg else print("No regex for file_path_extract found, now saving file history")
         options = FileHistory()
         for key in incoming.mappings:
             files = (key, incoming.mappings[key])
@@ -64,7 +67,7 @@ class Outgoing:
         try:
             if hasattr(self, "api"):
                 if not self.dry:
-                    response = call_api(self.api["uri"], self.api["pipeline"])
+                    response = call_api(self.api["uri"], self.api["pipeline"], self.verbose)
                     if response.status_code != requests.codes.ok:
                         self.logger.error("Launch project \"%s\" to api: \"%s\" wasn't succesful" % (self.project, self.api))
                     else:
@@ -81,6 +84,7 @@ class Outgoing:
 
     def move_files(self, files):
         if hasattr(self, "path"):
+            if self.verbose: print("Moving files to outgoing directory: %s" % (self.path))
             for f in files:
                 try:
                     if not self.dry:

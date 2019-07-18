@@ -102,7 +102,7 @@ def get_logic_function_names():
     return classes_methods
 
 
-def call_api(api, pipeline):
+def call_api(api, pipeline, verbose=False):
     """ 
         API headers for GoCD.v > 19 
             headers = {"Content-Type": "application/json", "Accept":"application/vnd.go.cd.v1+json"}
@@ -115,6 +115,7 @@ def call_api(api, pipeline):
     if version != "17.10.0":
         raise InvalidAPIVersion("We expected a GoCD verison of 17.10.0 but got %s" % (version))
 
+    print("Calling API: %s/%s/schedule \n\t version: %s" % (api, pipeline, version))
     user, passwd = (os.environ["gocd-username"], os.environ["gocd-passwd"])
     headers =  {"Confirm": "true"}
     response = requests.post(

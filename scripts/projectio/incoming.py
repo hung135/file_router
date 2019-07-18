@@ -8,12 +8,13 @@ from utils.customexceptions import ExitProjectException
 class Incoming:
     file_pattern = []
     path = None
-    def __init__(self, project, logger=None, dry=False, **config):
+    def __init__(self, project, logger=None, dry=False, verbose=False, **config):
         self.__dict__.update(config)
         self.path = os.path.abspath(self.path)
         self.project = project
         self.logger = logger
         self.dry = dry
+        self.verbose = verbose
         self.files = self._walk_files()
         self.mappings = []
 
@@ -21,22 +22,22 @@ class Incoming:
         session=Session()
         try:
             paths = glob.glob(self.path + "/**/*", recursive=True)
+            if self.verbose: print("Walking incoming path: %s" % self.path)
             if hasattr(self, "file_pattern"):
                 paths_based_on_file_pattern = []
                 for t in self.file_pattern:
                     paths_based_on_file_pattern.extend(glob.glob(self.path + "/**/" + t, recursive=True))
                 not_using = list(set(paths) - set(paths_based_on_file_pattern))
-                if self.logger is not None:
+                if self.logger is not None and not self.dry:
                     # program_unit =Column(String(128)) 
                     # error_code =Column(String(5))  
                     # error_timestamp  =Column(DateTime, default=datetime.datetime.utcnow)
                     # user_name =Column(String(32))  
                     # sql_statement =Column(String(2000)) 
                     for fn in not_using:
-                        if not self.dry:
-                            new_record = ErrorLog(program_unit=f'switchboard: {self.project}',error_code='?????',user_name='GOCD',
-                            error_message=f'{os.path.basename(fn)}: No matching REGEX in yaml')
-                            session.add(new_record)
+                        new_record = ErrorLog(program_unit=f'switchboard: {self.project}',error_code='?????',user_name='GOCD',
+                        error_message=f'{os.path.basename(fn)}: No matching REGEX in yaml')
+                        session.add(new_record)
                     
                         self.logger.warning("Will not process this file %s" % (os.path.basename(fn)))
                     session.commit()
@@ -49,6 +50,7 @@ class Incoming:
 
     def save_all(self, session):
         try:
+            if self.verbose: print("Saving intial incoming records to database")
             for f in self.files:
                 if not self.dry:
                     new_record = FileRouterHistory(project_name=self.project, incoming_path=f)

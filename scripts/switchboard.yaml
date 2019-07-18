@@ -15,7 +15,7 @@ project1:
   incoming: 
     path: '/workspace/incoming/1800/1111/zzzz'
     file_pattern: 
-      - '*.xls'
+      - 'Neque*.*'
   outgoing: 
     path: 'outgoing/project1/1999/{{yesterday}}/'
     logic:
