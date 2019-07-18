@@ -15,11 +15,12 @@ class Outgoing:
     path = None
     rename_options = []
     file_path_extract = None
-    def __init__(self, project, logger=None, **config):
+    def __init__(self, project, logger=None, dry=False, **config):
         self.__dict__.update(config)
         self.project = project
         self.path = os.path.abspath(self.path)
         self.logger = logger
+        self.dry = dry
 
     def rename(self, files):
         files_mapping = {}
@@ -30,7 +31,8 @@ class Outgoing:
                     for i,f in enumerate(files):
                         new = getattr(options, option)(f)
                         files_mapping[f] = new
-                        os.rename(f, new)
+                        if not self.dry:
+                            os.rename(f, new)
                         files[i] = new
                 else:
                     if self.logger is not None: 
@@ -45,7 +47,7 @@ class Outgoing:
             fn = os.path.basename(files[0])
             md5, size, date, extract = FileHistory.file_information(self.logger, files[1],reg)
             try:
-                if all(val is not None for val in [md5, size, date]):
+                if all(val is not None for val in [md5, size, date]) and not self.dry:
                     for record in session.query(FileRouterHistory).filter(FileRouterHistory.project_name == self.project).filter(FileRouterHistory.incoming_path == files[0]):
                         record.outgoing_path = os.path.join(self.path,os.path.basename(files[1]))
                         record.file_date = date
@@ -61,11 +63,13 @@ class Outgoing:
     def call_api(self):
         try:
             if hasattr(self, "api"):
-                call_api(self.api["uri"], self.api["pipeline"])
-                if response.status_code != requests.codes.ok:
-                    self.logger.error("Launch project \"%s\" to api: \"%s\" wasn't succesful" % (self.project, self.api))
-                else:
-                    self.logger.warning("Project %s to api's pipeline: %s has launched" % (self.project, self.api["pipeline"]))
+                if not self.dry:
+                    response = call_api(self.api["uri"], self.api["pipeline"])
+                    if response.status_code != requests.codes.ok:
+                        self.logger.error("Launch project \"%s\" to api: \"%s\" wasn't succesful" % (self.project, self.api))
+                    else:
+                        self.logger.warning("Project %s to api's pipeline: %s has launched" % (self.project, self.api["pipeline"]))
+                return self.api
         except KeyError as e:
             self.logger.error("Missing api creds for project \"%s\" and api \"%s\"" % (self.project, self.api))
         except requests.exceptions.MissingSchema as e:
@@ -79,9 +83,10 @@ class Outgoing:
         if hasattr(self, "path"):
             for f in files:
                 try:
-                    if not os.path.isdir(self.path):
-                        os.makedirs( self.path)
-                    shutil.move(f,  self.path)
+                    if not self.dry:
+                        if not os.path.isdir(self.path):
+                            os.makedirs( self.path)
+                        shutil.move(f,  self.path)
                 except shutil.Error:
                     self.logger.error("%s can not me moved" %(os.path.basename(f)))
                     raise ExitProjectException("Files can not be moved")
