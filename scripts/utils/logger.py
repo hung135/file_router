@@ -3,8 +3,8 @@ import logging
 from database.models import Logging
 
 class Logger():
-    def __init__(self, project_name, session, logging_path=None, verbose=False):
-        self._setuplogger(project_name, session, logging_path, verbose)
+    def __init__(self, project_name, session, logging_path=None, verbose=False, dry=False):
+        self.logger = self._setuplogger(project_name, session, logging_path, verbose) if not dry else logging.getLogger()
 
     def _setuplogger(self, project_name, session, logging_path, verbose):
         my_handlers = [logging.StreamHandler(), LogDBHandler(session, project_name)]
@@ -15,7 +15,7 @@ class Logger():
             format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s,",
             handlers=my_handlers
         )
-        self.logger = logging.getLogger()
+        return logging.getLogger()
 
 class LogDBHandler(logging.Handler):
     def __init__(self, session, project_name):

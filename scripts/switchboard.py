@@ -36,9 +36,15 @@ def yaml_reader(yaml_path=None):
 
 def parse_cli():
    parser = argparse.ArgumentParser(description='Process a yaml file')
-   parser.add_argument("-y","-yaml","--yaml", help="Location of the yaml file")
+   required_group = parser.add_argument_group("Required")
+   required_group.add_argument("-y","-yaml","--yaml", help="Location of the yaml file")
    parser.add_argument("-s", "-skeleton", "--skeleton", help="Generates a skeleton.yaml file to the directory specified")
    parser.add_argument("-v", "-verbose", help="Enable verbose mode", action="store_true")
+   parser.add_argument(
+      "-d",
+      "--dry", 
+      help="Enable dry mode which will run the entire yaml file with output only, nothing will be moved or saved", 
+      action="store_true")
    parser.add_argument("--version", help="Version of executable", action="store_true")
    args = parser.parse_args()
    return args 
@@ -90,10 +96,6 @@ def _print_msg(msg, val):
    sys.exit(1)
 
 def print_version():
-   #with open("version.txt", "r") as f:
-   #   v = f.read()
-   
- 
    pprint.pprint(version_dict)
    sys.exit(0)
 
@@ -121,7 +123,7 @@ def validate_yaml(config):
                      _print_msg(message, logic)
             else:
                _print_msg(message, logic)
-      except KeyError as e:
+      except KeyError:
          _print_msg(message, logic)
 
 def runner(args):
@@ -132,10 +134,10 @@ def runner(args):
    aborted_projects = {}
    for project in config:
       try:
-         logger = Logger(project, sess, config[project]["logging"], args.v)
+         logger = Logger(project, sess, config[project]["logging"], args.v, args.dry)
       except KeyError:
-         logger = Logger(project, sess, None, args.v)
-      proj = ProjectIO(project, logger.logger, **config[project])
+         logger = Logger(project, sess, None, args.v, args.dry)
+      proj = ProjectIO(project, logger.logger, args.dry, **config[project])
       errors = proj.run_pipeline(sess)
       if errors is not None:
          aborted_projects[project] = errors

@@ -13,9 +13,9 @@
 project1:
   logging: '/workspace/outgoing/project1/logging.log'
   incoming: 
-    path: 'incoming/1800/1111/zzzz'
+    path: '/workspace/incoming/1800/1111/zzzz'
     file_pattern: 
-      - '*.zip'
+      - '*.xls'
   outgoing: 
     path: 'outgoing/project1/1999/{{yesterday}}/'
     logic:

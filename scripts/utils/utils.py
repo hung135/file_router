@@ -108,7 +108,7 @@ def call_api(api, pipeline):
             headers = {"Content-Type": "application/json", "Accept":"application/vnd.go.cd.v1+json"}
     """
     version_request = requests.get(api + "/version", headers={"Accept":"application/vnd.go.cd.v1+json"})
-    if response.status_code != requests.codes.ok:
+    if version_request.status_code != requests.codes.ok:
         raise ConnectionError("Bad version check") 
         
     version = json.loads(version_request)["version"] 
@@ -123,4 +123,8 @@ def call_api(api, pipeline):
         headers=headers,
         verify=False
     )
+
+    if response.status_code != requests.codes.ok:
+        raise ConnectionError("Bad version check") 
+
     return response
