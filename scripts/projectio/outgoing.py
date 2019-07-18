@@ -86,6 +86,7 @@ class Outgoing:
         if hasattr(self, "path"):
             if self.verbose: print("Moving files to outgoing directory: %s" % (self.path))
             for f in files:
+                if self.verbose: print("\n\t File %s" % (f))
                 try:
                     if not self.dry:
                         if not os.path.isdir(self.path):
