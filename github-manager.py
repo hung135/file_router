@@ -47,9 +47,9 @@ def download_asset(filep, tag, releases):
         fname = re.findall("filename=(.+)", response.headers.get("content-disposition"))[0]
         print("Writing file %s" % fname)
         filep = os.path.abspath(filep + "/%s" % fname)
-        open(filep).write(response.content)
+        open(filep, "wb").write(response.content)
     except Exception as e:
-        _error_out("Couldn't download file to %s based on tag %s, \n e: %e" % (filep, tag, e))
+        _error_out("Couldn't download file to %s based on tag %s, \n e: %s" % (filep, tag, e))
 
 def parse_cli():
    parser = argparse.ArgumentParser(description='Manages release assets for a Github release')
