@@ -53,6 +53,7 @@ class Incoming:
         try:
             if self.verbose: print("Saving intial incoming records to database")
             for f in self.files:
+                if self.verbose: print("\n\t Saving: %s" % (f))
                 if not self.dry:
                     new_record = FileRouterHistory(project_name=self.project, incoming_path=f)
                     session.add(new_record)
