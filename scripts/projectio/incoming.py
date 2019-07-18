@@ -26,6 +26,7 @@ class Incoming:
             if hasattr(self, "file_pattern"):
                 paths_based_on_file_pattern = []
                 for t in self.file_pattern:
+                    if self.verbose: print("Walking above path with file_patter: %s" % (t))
                     paths_based_on_file_pattern.extend(glob.glob(self.path + "/**/" + t, recursive=True))
                 not_using = list(set(paths) - set(paths_based_on_file_pattern))
                 if self.logger is not None and not self.dry:
