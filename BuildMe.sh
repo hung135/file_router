@@ -1,3 +1,5 @@
+git pull origin master
+
 echo "version_dict = {\"git_hash\":\"\"\"">scripts/version.py
 git rev-parse HEAD >>scripts/version.py
 echo "\"\"\",">>scripts/version.py
