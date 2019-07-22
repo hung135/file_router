@@ -11,25 +11,49 @@ from utils.customexceptions import ExitProjectException, InvalidAPIVersion
 from utils.utils import call_api
 
 class Outgoing:
-    #making this visible to linter
+    """
+    Set by the 'outgoing' section in the YAML file
+
+    Attributes
+    ----------
+    project: str
+        Project name
+    logger: logging.logger
+    dry: bool
+        Dry Run
+    config: **kwarg, dict
+    """
+
     path = None
     rename_options = []
     file_path_extract = None
-    def __init__(self, project, logger=None, dry=False, verbose=False, **config):
+    def __init__(self, project, logger=None, dry=False, **config):
         self.__dict__.update(config)
         self.project = project
         self.path = os.path.abspath(self.path)
         self.logger = logger
         self.dry = dry
-        self.verbose = verbose
 
     def rename(self, files):
+        """
+        Renames the files based on the given logic
+
+        Parameters
+        ----------
+        files: list
+            List of file paths
+
+        Returns
+        -------
+        tuple
+            (Files found, Equivalent files found but with logic ran over them)
+        """
         files_mapping = {}
         if "rename_options" in self.logic:
             options = RenameOptions()
             for option in self.logic["rename_options"]:
                 if hasattr(options, option):
-                    if self.verbose: print("Running rename_option: %s" % option)
+                    self.logger.warning("Running rename_option: %s " % option)
                     for i,f in enumerate(files):
                         new = getattr(options, option)(f)
                         files_mapping[f] = new
@@ -37,18 +61,27 @@ class Outgoing:
                             os.rename(f, new)
                         files[i] = new
                 else:
-                    if self.logger is not None: 
-                        self.logger.warning("The rename_options function %s does not exists" % (option))
+                    self.logger.warning("The rename_options function %s does not exists" % (option))
         return (files, files_mapping)
 
     def file_history(self, incoming, session):
+        """
+        Gathers the file information (md5, size, creation date) and saves it to the Database
+
+        Parameters
+        ----------
+        incoming: projectio.Incoming
+            Incoming object of the current project
+        session: sqlalchemy.orm.sessionmaker
+            Session of the current DB connection
+        """
         reg = self.logic["file_path_extract"] if "file_path_extract" in self.logic else None
-        if self.verbose: print("Found regex for file_path_extract %s, now saving file history to db" % reg) if reg else print("No regex for file_path_extract found, now saving file history")
+        self.logger.warning("Found regex for file_path_extract %s, now saving file history to db" % reg)
         options = FileHistory()
         for key in incoming.mappings:
             files = (key, incoming.mappings[key])
             fn = os.path.basename(files[0])
-            md5, size, date, extract = FileHistory.file_information(self.logger, files[1],reg)
+            md5, size, date, extract = FileHistory.file_information(self.logger, files[1], reg)
             try:
                 if all(val is not None for val in [md5, size, date]) and not self.dry:
                     for record in session.query(FileRouterHistory).filter(FileRouterHistory.project_name == self.project).filter(FileRouterHistory.incoming_path == files[0]):
@@ -64,10 +97,18 @@ class Outgoing:
                 sys.exit(1)
     
     def call_api(self):
+        """
+        Calls the API
+
+        Returns
+        -------
+        dict:
+            API object for printing/loggin
+        """
         try:
             if hasattr(self, "api"):
                 if not self.dry:
-                    response = call_api(self.api["uri"], self.api["pipeline"], self.verbose)
+                    response = call_api(self.api["uri"], self.api["pipeline"])
                     if response.status_code != requests.codes.ok:
                         self.logger.error("Launch project \"%s\" to api: \"%s\" wasn't succesful" % (self.project, self.api))
                     else:
@@ -83,10 +124,18 @@ class Outgoing:
             self.logger.error("Invalid api call: \n %s" % (e))
 
     def move_files(self, files):
+        """
+        Moves the files from the incoming directory to the outgoing directory
+
+        Parameters
+        ----------
+        files: list
+            List of file paths
+        """
         if hasattr(self, "path"):
-            if self.verbose: print("Moving files to outgoing directory: %s" % (self.path))
+            self.logger.warning("Moving files to outgoing directory: %s" % self.path)
             for f in files:
-                if self.verbose: print("\n\t File %s" % (f))
+                self.logger.warning("File %s" % f)
                 try:
                     if not self.dry:
                         if not os.path.isdir(self.path):

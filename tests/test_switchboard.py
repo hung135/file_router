@@ -3,6 +3,7 @@ sys.path.append("..scripts")
 
 import unittest
 import os
+import logging
 from config_parent import Config
 from switchboard import yaml_reader
 from projectio.projectio import ProjectIO
@@ -46,7 +47,8 @@ class TestFileRouter(unittest.TestCase,Config):
              
             incoming=yaml_config[project]['incoming']
             outgoing=yaml_config[project]['outgoing']
-            pio=ProjectIO(project=project,incoming=incoming,outgoing=outgoing)
+            logger = logging.getLogger()
+            pio=ProjectIO(project=project, logger=logger, incoming=incoming,outgoing=outgoing)
             
             os.makedirs(os.path.abspath(pio.incoming.path),exist_ok=True)
             os.makedirs(os.path.abspath(pio.outgoing.path),exist_ok=True) 
@@ -66,7 +68,8 @@ class TestFileRouter(unittest.TestCase,Config):
             incoming=yaml_config[project]['incoming']
             outgoing=yaml_config[project]['outgoing']
             outgoing_path=yaml_config[project]['outgoing']['path']
-            pio=ProjectIO(project=project,incoming=incoming,outgoing=outgoing)
+            logger = logging.getLogger()
+            pio=ProjectIO(project=project, logger=logger, incoming=incoming, outgoing=outgoing)
             pio.incoming.save_all(SESS)
             pio.outgoing.move_files(pio.incoming.files)
             self.pio.append(pio) #saving this so we can test base on values that current exists in this object

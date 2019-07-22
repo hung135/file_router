@@ -3,27 +3,7 @@ import re
 import json
 import inspect
 import requests
-
 from utils.customexceptions import InvalidAPIVersion
-
-#Stolen from here
-#https://thispointer.com/python-how-to-get-list-of-files-in-directory-and-sub-directories/
-def getListOfFiles(dirName):
-    # create a list of file and sub directories 
-    # names in the given directory 
-    listOfFile = os.listdir(dirName)
-    allFiles = list()
-    # Iterate over all the entries
-    for entry in listOfFile:
-        # Create full path
-        fullPath = os.path.join(dirName, entry)
-        # If entry is a directory then get the list of files in this directory 
-        if os.path.isdir(fullPath):
-            allFiles = allFiles + getListOfFiles(fullPath)
-        else:
-            allFiles.append(fullPath)
-                
-    return allFiles
 
 def recurse_replace_yaml(p_trg_data, p_base_dict:dict):
     def inject_yaml_data(str_data, yaml:dict):
@@ -82,10 +62,19 @@ def traverse_replace_yaml_tree(yaml_data:dict):
 def replace_yaml_with_runtime(yaml : dict, runtime_data : dict):
     item = recurse_replace_yaml(yaml,runtime_data)
 
-def get_logic_function_names():    
+def get_logic_function_names():
     """ 
-        Changed from using pkgutil to only needing inspect since pyinstaller doesn't play well with
-        pkgutil. 
+    Retreieves all the classes and function names
+
+    Notes
+    -----
+    Changed from using pkgutil to only needing inspect since pyinstaller doesn't play well with
+    pkgutil. 
+
+    Returns
+    -------
+    dict
+        Class_name: class_method_name
     """
     import logic
     package = logic
@@ -101,11 +90,26 @@ def get_logic_function_names():
                 classes_methods[func] = method_list
     return classes_methods
 
-
-def call_api(api, pipeline, verbose=False):
+def call_api(api, pipeline):
     """ 
-        API headers for GoCD.v > 19 
-            headers = {"Content-Type": "application/json", "Accept":"application/vnd.go.cd.v1+json"}
+    Calls the GoCD API for a given URL/Pipeline
+
+    Notes
+    -----
+    API headers for GoCD.v > 19 
+        headers = {"Content-Type": "application/json", "Accept":"application/vnd.go.cd.v1+json"}
+
+    Parameters
+    ----------
+    api: str
+        API URL
+    pipeline: str
+        Pipeline that is being targeted
+
+    Returns
+    -------
+    dict
+        Response of the POST call
     """
     version_request = requests.get(api + "/version", headers={"Accept":"application/vnd.go.cd.v1+json"})
     if version_request.status_code != requests.codes.ok:
