@@ -102,7 +102,7 @@ def run(args):
         gh = Github()
     else:
         key = read_key(args.key)
-        gh = Github(base_url=args.e + "/api/v3", login_or_token=key) if args.enterprise else Github(key)
+        gh = Github(base_url=args.enterprise + "/api/v3", login_or_token=key) if args.enterprise else Github(key)
     repository = gh.get_repo(args.repo)
     releases = repository.get_releases()
 

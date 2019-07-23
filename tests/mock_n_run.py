@@ -1,6 +1,6 @@
 import sys
-  
 import os
+import logging
  
 from switchboard import yaml_reader
 from projectio.projectio import ProjectIO
@@ -61,7 +61,8 @@ def step2_mokc_data(): #using environment variables
             
         incoming=xx[project]['incoming']
         outgoing=xx[project]['outgoing']
-        pio=ProjectIO(project=project,incoming=incoming,outgoing=outgoing)
+        logger = logging.getLogger()
+        pio=ProjectIO(project=project, logger=logger, incoming=incoming, outgoing=outgoing)
         
         os.makedirs( pio.incoming.path,exist_ok=True)
         os.makedirs(pio.outgoing.path,exist_ok=True) 
@@ -79,5 +80,4 @@ if __name__ == '__main__':
     step2_mokc_data()
     import switchboard
     args = parse_cli()
-     
     runner(args)
